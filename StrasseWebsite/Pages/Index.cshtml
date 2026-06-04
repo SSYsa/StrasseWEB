@@ -1,0 +1,211 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="hero-banner">
+    <div class="hero-container">
+        <h1 class="hero-brand">STRASSE <span>IMÓVEIS</span></h1>
+
+        <div class="hero-slogan-box">
+            <h2>O melhor caminho para o seu imóvel!</h2>
+            <p>Seu Parceiro de Confiança para Comprar, Vender ou Construir Imóveis no Brasil.</p>
+        </div>
+
+        <!-- FORMULÁRIO ADICIONADO: Redireciona via GET direto para a nossa página de listagem -->
+        <form method="get" action="/Listagem" class="search-bar-container">
+
+            <div class="search-field">
+                <label for="operacao">O que deseja fazer?</label>
+                <select id="operacao" name="operacao">
+                    <option value="">Selecione a opção... (Listar tudo)</option>
+                    <option value="comprar">Comprar Imóvel Pronto</option>
+                    <option value="construir">Construir meu Sonho</option>
+                </select>
+            </div>
+
+            <div class="search-field">
+                <label for="tipoImovel">Tipo de Imóvel</label>
+                <select id="tipoImovel" name="tipo">
+                    <option value="">Todos os tipos...</option>
+                    <option value="apartamento">Apartamento</option>
+                    <option value="casa">Casa</option>
+                    <option value="kitnet">Kitnet/Conjugado</option>
+                </select>
+            </div>
+
+            <div class="search-field">
+                <label for="localizacao">Onde procura?</label>
+                <select id="localizacao" name="localizacao">
+                    <option value="">Qualquer Bairro / Cidade...</option>
+                    <option value="Blumenau">Blumenau - SC</option>
+                    <option value="Pomerode">Pomerode - SC</option>
+                </select>
+            </div>
+
+            <div class="search-action">
+                <button type="submit" class="btn-search">Buscar</button>
+            </div>
+
+        </form>
+    </div>
+</section>
+
+<section class="properties-section">
+    <div class="properties-container">
+
+        <div class="section-header">
+            <h2>Imóveis à Venda</h2>
+            <div class="title-line"></div>
+        </div>
+
+        <div class="properties-grid">
+
+            <div class="property-card">
+                <div class="card-image">
+                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
+                    <span class="badge-status">Venda</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="property-price">R$ 520.000</h3>
+                    <h4 class="property-title">Casa de Alvenaria Moderna</h4>
+                    <p class="property-location">Vila Nova, Blumenau - SC</p>
+                    <div class="property-details">
+                        <span>3 Quartos</span>
+                        <span>2 Vagas</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="property-card">
+                <div class="card-image">
+                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
+                    <span class="badge-status">Venda</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="property-price">R$ 380.000</h3>
+                    <h4 class="property-title">Apartamento com Sacada</h4>
+                    <p class="property-location">Itoupava Seca, Blumenau - SC</p>
+                    <div class="property-details">
+                        <span>2 Quartos</span>
+                        <span>1 Vaga</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="property-card">
+                <div class="card-image">
+                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
+                    <span class="badge-status">Venda</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="property-price">R$ 890.000</h3>
+                    <h4 class="property-title">Sobrado Alto Padrão</h4>
+                    <p class="property-location">Victor Konder, Blumenau - SC</p>
+                    <div class="property-details">
+                        <span>4 Quartos</span>
+                        <span>3 Vagas</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="property-card">
+                <div class="card-image">
+                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
+                    <span class="badge-status">Venda</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="property-price">R$ 450.000</h3>
+                    <h4 class="property-title">Casa Residencial Ampla</h4>
+                    <p class="property-location">Escola Agrícola, Blumenau - SC</p>
+                    <div class="property-details">
+                        <span>3 Quartos</span>
+                        <span>2 Vagas</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="property-card">
+                <div class="card-image">
+                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
+                    <span class="badge-status">Venda</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="property-price">R$ 320.000</h3>
+                    <h4 class="property-title">Apartamento Pronto para Morar</h4>
+                    <p class="property-location">Água Verde, Blumenau - SC</p>
+                    <div class="property-details">
+                        <span>2 Quartos</span>
+                        <span>1 Vaga</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="property-card">
+                <div class="card-image">
+                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
+                    <span class="badge-status">Venda</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="property-price">R$ 1.200.000</h3>
+                    <h4 class="property-title">Terreno em Condomínio Fechado</h4>
+                    <p class="property-location">Centro, Blumenau - SC</p>
+                    <div class="property-details">
+                        <span>0 Quartos</span>
+                        <span>0 Vagas</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="about-section">
+    <div class="about-container">
+
+        <div class="build-banner">
+            <!-- LINKADO: Envia o usuário direto para a aba de construções -->
+            <a href="/Listagem?operacao=construir" class="btn-build-highlight">
+                <span class="icon-hammer">🔨</span> Quero Construir meu Imóvel Personalizado
+            </a>
+        </div>
+
+        <div class="about-content-wrapper">
+
+            <div class="about-image-box">
+                <img src="/images/about-strasse.jpg" alt="Conheça a Strasse" onerror="this.src='https://placehold.co/600x450?text=Strasse+Imobili%C3%A1ria+%2B+Construtora'" />
+            </div>
+
+            <div class="about-text-box">
+                <span class="about-subtitle">Sua escolha inteligente</span>
+                <h2>Conheça a Strasse Imóveis</h2>
+                <div class="title-line-left"></div>
+
+                <p class="about-description">
+                    Unimos a experiência de uma imobiliária de confiança com o DNA de uma construtora inovadora. Na Strasse, não apenas encontramos o imóvel pronto dos seus sonhos, mas também projetamos e construímos o seu lar do zero, cuidando de cada detalhe desde a fundação até a entrega das chaves.
+                </p>
+
+                <ul class="about-features">
+                    <li>
+                        <span class="feature-icon">✓</span>
+                        <strong>Construção Financiada:</strong> Ajudamos você a aprovar o crédito para o terreno e a obra juntos.
+                    </li>
+                    <li>
+                        <span class="feature-icon">✓</span>
+                        <strong>Projetos Exclusivos:</strong> Arquitetura moderna planejada sob medida para a sua rotina.
+                    </li>
+                    <li>
+                        <span class="feature-icon">✓</span>
+                        <strong>Transparência Total:</strong> Acompanhamento de obras sem surpresas no orçamento.
+                    </li>
+                </ul>
+
+                <!-- LINKADO: Botão do WhatsApp do Especialista conforme solicitado -->
+                <a href="https://wa.me/5547984917838" target="_blank" class="btn-about-action">Fale com um Especialista</a>
+            </div>
+
+        </div>
+    </div>
+</section>

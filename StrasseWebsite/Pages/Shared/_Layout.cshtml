@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Strasse Imóveis</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StrasseWebsite.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="header-logo">
+                <a href="/">
+                    <img src="/images/icon/globo.png" alt="Strasse Imóveis" class="logo-icon" />
+                </a>
+            </div>
+
+            <nav class="header-nav">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/QuemSomos">Quem Somos</a></li>
+                    <li><a href="/Listagem?operacao=comprar">Imobiliária</a></li>
+                    <li><a href="/Listagem?operacao=construir">Construtora</a></li>
+                    <li><a href="/Contato?tipo=carreira">Trabalhe Conosco</a></li>
+                    <li><a href="/Contato?tipo=parceria">Parcerias</a></li>
+                </ul>
+            </nav>
+
+            <div class="navbar-right">
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <div class="user-menu-container" style="position: relative; display: inline-block;">
+                        <button class="user-profile-btn" onclick="toggleUserMenu()" style="background: none; border: none; font-size: 24px; cursor: pointer;">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                        
+                        <div id="userDropdownModal" class="user-dropdown-modal" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; box-shadow: 0px 4px 8px rgba(0,0,0,0.1); z-index: 1000; min-width: 180px; border-radius: 4px; padding: 10px 0;">
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li><a href="/Admin/Dashboard" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Painel Administrador</a></li>
+                                <li><a href="/Imoveis/MeusImoveis" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Meus Imóveis</a></li>
+                                <li><a href="/Perfil/MeuPerfil" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Meu Perfil</a></li>
+                                <hr style="margin: 5px 0;" />
+                                <li><a href="/Account/Logout" class="text-danger" style="display: block; padding: 8px 15px; text-decoration: none; font-weight: bold;">Sair</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="btn btn-login">Login</a>
+                }
+            </div> </div> </header> <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-col col-brand">
+                <img src="/images/icon/globo.png" alt="Strasse" class="footer-logo-icon" />
+                <p>Strasse Imóveis & Construtora<br />O melhor caminho para o seu imóvel no Brasil.</p>
+            </div>
+
+            <div class="footer-col">
+                <h3>Navegação</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/QuemSomos">Quem Somos</a></li>
+                    <li><a href="/Contato?tipo=carreira">Trabalhe Conosco</a></li>
+                    <li><a href="/Contato?tipo=parceria">Parcerias</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Nossos Serviços</h3>
+                <ul>
+                    <li><a href="/Listagem?operacao=comprar">Imóveis Prontos</a></li>
+                    <li><a href="/Listagem?operacao=construir">Construção sob Medida</a></li>
+                    <li><a href="https://wa.me/5547984917838" target="_blank">Financiamentos</a></li>
+                    <li><a href="https://wa.me/5547984917838" target="_blank">Avaliação de Imóveis</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col col-contact">
+                <h3>Fale Conosco</h3>
+                <p>📍 Rua Presidente Juscelino, 1260, Pomerode, Santa Catarina</p>
+                <p>📞 (47) 3395-0009</p>
+                <p>📱 <a href="https://wa.me/5547984917838" target="_blank" style="color:inherit; text-decoration:none;">(47) 98491-7838</a></p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <p>&copy; 2026 Strasse Imóveis. Todos os direitos reservados.</p>
+                <div class="footer-privacy-links">
+                    <a asp-page="/Privacy">Política de Privacidade</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        function toggleUserMenu() {
+            var modal = document.getElementById("userDropdownModal");
+            if (modal) {
+                modal.style.display = modal.style.display === "none" ? "block" : "none";
+            }
+        }
+        
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-profile-btn') && !event.target.matches('.fa-user-circle')) {
+                var modal = document.getElementById("userDropdownModal");
+                if (modal && modal.style.display === "block") {
+                    modal.style.display = "none";
+                }
+            }
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

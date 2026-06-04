@@ -1,0 +1,191 @@
+﻿@page
+@model StrasseWebsite.Pages.ListagemModel
+@{
+    ViewData["Title"] = Model.Operacao == "construir" ? "Projetos de Construção" : "Imóveis para Compra";
+}
+
+<!-- Adicionamos uma classe dinâmica baseada no tipo de operação recebida -->
+<div class="list-page-container @(Model.Operacao == "construir" ? "modo-construtora" : "modo-imobiliaria")">
+
+    <!-- BARRA LATERAL: FILTROS -->
+    <aside class="filter-sidebar">
+        <div class="filter-group-tabs">
+            <a href="/Listagem?operacao=comprar" class="tab-btn @(Model.Operacao == "comprar" ? "active" : "")">Comprar</a>
+            <a href="/Listagem?operacao=lancamentos" class="tab-btn @(Model.Operacao == "lancamentos" ? "active" : "")">Lançamentos</a>
+            <a href="/Listagem?operacao=construir" class="tab-btn @(Model.Operacao == "construir" ? "active" : "")">Construções</a>
+        </div>
+
+        <form method="get" class="sidebar-form">
+            <!-- Manter o estado da operação ao enviar o formulário -->
+            <input type="hidden" name="operacao" value="@Model.Operacao" />
+
+            <div class="filter-block">
+                <h3>Tipo de Imóvel</h3>
+                <label class="check-container">
+                    Apartamento
+                    <input type="checkbox" name="tipo" value="apartamento">
+                    <span class="checkmark"></span>
+                </label>
+                <label class="check-container">
+                    Casa
+                    <input type="checkbox" name="tipo" value="casa">
+                    <span class="checkmark"></span>
+                </label>
+                <label class="check-container">
+                    Kitnet/Conjugado
+                    <input type="checkbox" name="tipo" value="kitnet">
+                    <span class="checkmark"></span>
+                </label>
+                <a href="#" class="filter-link">Todos os tipos de imóveis ›</a>
+            </div>
+
+            <!-- FILTRO DE CONSTRUTORA: Exibido condicionalmente via C# se for o modo construir -->
+            @if (Model.Operacao == "construir")
+            {
+                <div class="filter-block filter-construtora-block">
+                    <h3>Construtoras Parceiras</h3>
+                    <label class="check-container">
+                        Strasse Engenharia
+                        <input type="checkbox" name="construtora" value="strasse">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="check-container">
+                        Incorporadora Vale
+                        <input type="checkbox" name="construtora" value="vale">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="check-container">
+                        Blumenau Construções
+                        <input type="checkbox" name="construtora" value="blumenau">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            }
+
+            <div class="filter-block">
+                <h3>Quartos</h3>
+                <div class="btn-group-filter">
+                    <button type="button" class="btn-round">1+</button>
+                    <button type="button" class="btn-round active">2+</button>
+                    <button type="button" class="btn-round">3+</button>
+                    <button type="button" class="btn-round">4+</button>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <h3>Banheiros</h3>
+                <div class="btn-group-filter">
+                    <button type="button" class="btn-round">1+</button>
+                    <button type="button" class="btn-round">2+</button>
+                    <button type="button" class="btn-round">3+</button>
+                    <button type="button" class="btn-round">4+</button>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <h3>Preço</h3>
+                <div class="input-range-group">
+                    <div class="input-box">
+                        <span class="unit">R$</span>
+                        <input type="number" placeholder="Mínimo" name="precoMin">
+                    </div>
+                    <div class="input-box">
+                        <span class="unit">R$</span>
+                        <input type="number" placeholder="Máximo" name="precoMax">
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-actions">
+                <button type="button" class="btn-clean-filter">Limpar</button>
+                <button type="submit" class="btn-apply-filter">Buscar imóveis</button>
+            </div>
+        </form>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL: RESULTADOS -->
+    <main class="results-content">
+
+        <div class="results-header">
+            <div class="search-top-bar">
+                <input type="text" class="input-search-location" value="Blumenau - SC" placeholder="Digite a cidade ou bairro...">
+                <button class="btn-alert">🔔 Criar alerta</button>
+                <button class="btn-map">🗺️ Mapa</button>
+            </div>
+
+            <div class="quick-tags">
+                <span class="tag">Mobiliado</span>
+                <span class="tag">Aceita animais</span>
+                <span class="tag">Piscina</span>
+                <span class="tag">Varanda</span>
+            </div>
+
+            <div class="results-counter-row">
+                <!-- Título dinâmico contando a lista real mapeada do banco -->
+                @if (Model.Operacao == "construir")
+                {
+                    <h2><strong>@Model.Imoveis.Count</strong> Projetos e Terrenos para Construção em Blumenau - SC</h2>
+                }
+                else
+                {
+                    <h2><strong>@Model.Imoveis.Count</strong> Imóveis para venda em Santa Catarina - SC</h2>
+                }
+                <div class="sort-dropdown">
+                    <button class="btn-sort">⇅ Ordenar por</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="cards-list-wrapper">
+
+            @foreach (var imovel in Model.Imoveis)
+            {
+                <div class="horizontal-property-card">
+                    <div class="card-left-img">
+                        <img src="@(string.IsNullOrEmpty(imovel.UrlImagemPrincipal) ? "https://placehold.co/300x200?text=Sem+Foto" : imovel.UrlImagemPrincipal)" alt="@imovel.Titulo">
+                    </div>
+                    <div class="card-right-info">
+                        <div class="card-info-header">
+                            <span class="property-type-tag">
+                                @imovel.Tipo.ToString() com @imovel.TamanhoTerreno m²
+                            </span>
+                            <button class="btn-favorite">❤️</button>
+                        </div>
+                        <h3 class="property-list-title">@imovel.Bairro, @imovel.CidadeEstado</h3>
+                        <p class="property-list-address">Código: @imovel.CodigoImovel</p>
+
+                        <div class="property-list-specs">
+                            <span>📐 @imovel.TamanhoTerreno m²</span>
+                            @if(imovel.QuantidadeQuartos > 0)
+                            {
+                                <span>🛏️ @imovel.QuantidadeQuartos Quartos</span>
+                            }
+                            @if(imovel.QuantidadeVagasGaragem > 0)
+                            {
+                                <span>🚗 @imovel.QuantidadeVagasGaragem Vagas</span>
+                            }
+                        </div>
+
+                        <div class="card-info-footer">
+                            <div class="price-box">
+                                <span class="main-price">R$ @imovel.Preco.ToString("N2")</span>
+                                <span class="sub-price">Status: @imovel.Status</span>
+                            </div>
+                            <!-- O link agora chama exatamente a assinatura esperada pelo seu OnGetAsync(int id) -->
+                            <a href="/Detalhes?id=@imovel.Id" class="btn-contact-action" style="text-decoration:none; text-align:center; display: flex; align-items: center; justify-content: center;">Ver mais...</a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (!Model.Imoveis.Any())
+            {
+                <div class="text-center w-100 py-5 text-muted">
+                    <h3>Nenhum imóvel encontrado para esta categoria no momento.</h3>
+                    <p>Tente cadastrar novos imóveis no Painel Administrativo.</p>
+                </div>
+            }
+
+        </div>
+    </main>
+</div>

@@ -1,0 +1,114 @@
+﻿@page
+@model StrasseWebsite.Pages.Admin.Imoveis.EditarModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Editar Imóvel";
+}
+
+<div class="container my-5" style="max-width: 800px;">
+    <div class="card shadow border-0 p-4">
+        <h2 class="fw-bold mb-4 text-secondary">Editar Imóvel: <span class="text-danger">@Model.Imovel.CodigoImovel</span></h2>
+
+        <form method="post">
+            <input type="hidden" asp-for="Imovel.Id" />
+
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">Título do Anúncio</label>
+                    <input asp-for="Imovel.Titulo" class="form-control" />
+                    <span asp-validation-for="Imovel.Titulo" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">Descrição</label>
+                    <textarea asp-for="Imovel.Descricao" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Preço (R$)</label>
+                    <input asp-for="Imovel.Preco" type="number" step="0.01" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Cidade / Estado</label>
+                    <input asp-for="Imovel.CidadeEstado" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Bairro</label>
+                    <input asp-for="Imovel.Bairro" class="form-control" />
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">Endereço Completo</label>
+                    <input asp-for="Imovel.Endereco" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Quartos</label>
+                    <input asp-for="Imovel.QuantidadeQuartos" type="number" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Banheiros</label>
+                    <input asp-for="Imovel.QuantidadeBanheiros" type="number" class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Vagas de Garagem</label>
+                    <input asp-for="Imovel.QuantidadeVagasGaragem" type="number" class="form-control" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Proprietário</label>
+                    <select asp-for="Imovel.ProprietarioId" asp-items="Model.ProprietariosList" class="form-select"></select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Corretor Responsável</label>
+                    <select asp-for="Imovel.CorretorId" asp-items="Model.CorretoresList" class="form-select"></select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Tipo de Imóvel</label>
+                    <select asp-for="Imovel.Tipo" asp-items="Html.GetEnumSelectList<StrasseWebsite.Models.TipoImovel>()" class="form-select"></select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Transação</label>
+                    <select asp-for="Imovel.Transacao" asp-items="Html.GetEnumSelectList<StrasseWebsite.Models.TipoTransacao>()" class="form-select"></select>
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">URL da Imagem Principal (Supabase)</label>
+                    <input asp-for="Imovel.UrlImagemPrincipal" class="form-control" />
+                </div>
+
+                <div class="col-md-12 bg-light p-3 border rounded">
+                    <label class="form-label fw-bold text-danger">Adicionar Mais Fotos na Galeria (Múltiplas)</label>
+                    <p class="text-muted style-paragrafo" style="font-size:12px; margin-top:-5px;">Cole as URLs geradas pelo Supabase separando-as por vírgula ou uma por linha:</p>
+                    <textarea name="NovasImagensLinks" class="form-control" rows="3" placeholder="https://url1.supabase.co/...,&#10;https://url2.supabase.co/..."></textarea>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Status do Imóvel</label>
+                    <select asp-for="Imovel.Status" class="form-select">
+                        <option value="Disponivel">Disponível</option>
+                        <option value="Vendido">Vendido / Alugado</option>
+                        <option value="Inativo">Inativo</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Construtora Responsável</label>
+                    <input asp-for="Imovel.ConstrutoraResponsavel" class="form-control" placeholder="Opcional" />
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="/Admin/Dashboard" class="btn btn-outline-secondary px-4">Voltar</a>
+                <button type="submit" class="btn btn-danger px-5" style="background-color: #C00000; border:none;">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>

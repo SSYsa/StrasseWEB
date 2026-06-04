@@ -1,0 +1,83 @@
+﻿@page
+@model StrasseWebsite.Pages.ContatoModel
+@{
+    string tipo = Request.Query["tipo"].ToString().ToLower();
+    ViewData["Title"] = tipo == "carreira" ? "Trabalhe Conosco" : "Seja um Parceiro Strasse";
+}
+
+<div class="form-page-container">
+    <div class="form-card">
+        @if (tipo == "carreira")
+        {
+            <h2>Trabalhe Conosco</h2>
+            <p class="form-subtitle">Quer fazer parte da equipe Strasse? Preencha os dados abaixo e anexe seu currículo.</p>
+
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Nome Completo*</label>
+                    <input type="text" name="nome" required placeholder="Digite seu nome completo">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Telefone*</label>
+                        <input type="tel" name="telefone" required placeholder="(47) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail*</label>
+                        <input type="email" name="email" required placeholder="seuemail@exemplo.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Pretensão Salarial (Opcional)</label>
+                    <input type="number" name="pretensao" placeholder="R$ Opcional">
+                </div>
+                <div class="form-group">
+                    <label>Anexe seu Currículo (Apenas PDF)*</label>
+                    <input type="file" name="curriculo" accept=".pdf" required class="file-input">
+                </div>
+                <button type="submit" class="btn-submit-form">Enviar Currículo</button>
+            </form>
+        }
+        else
+        {
+            <h2>Seja um Parceiro</h2>
+            <p class="form-subtitle">Para corretores, arquitetos, engenheiros e construtoras. Habilite-se para vender ou construir conosco.</p>
+
+            <div class="partnership-notice">
+                💡 <strong>Exemplo de Parceria:</strong> Assim como somos habilitados para comercializar os grandes empreendimentos (como os da FG Empreendimentos), queremos somar forças com você para expandir as possibilidades em Blumenau e região!
+            </div>
+
+            <form method="post">
+                <div class="form-group">
+                    <label>Nome do Profissional / Razão Social*</label>
+                    <input type="text" name="nomeParceiro" required placeholder="Ex: Engenharia Vale ou Nome Sobrenome">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Telefone Comercial*</label>
+                        <input type="tel" name="telefone" required placeholder="(47) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail*</label>
+                        <input type="email" name="email" required placeholder="contato@empresa.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Atuação / Especialidade*</label>
+                    <select name="atuacao" required class="select-input">
+                        <option value="">Selecione uma opção...</option>
+                        <option value="corretor">Corretor Autônomo</option>
+                        <option value="arquiteto">Arquiteto / Designer</option>
+                        <option value="engenheiro">Engenheiro Civil</option>
+                        <option value="construtora">Construtora / Incorporadora</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Proposta de Parceria / Mensagem</label>
+                    <textarea name="mensagem" rows="5" placeholder="Conte resumidamente como podemos atuar juntos ou quais empreendimentos deseja integrar..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit-form">Solicitar Parceria</button>
+            </form>
+        }
+    </div>
+</div>

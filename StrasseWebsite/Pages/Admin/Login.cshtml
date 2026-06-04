@@ -1,0 +1,135 @@
+﻿@page "/Account/Login"
+@model StrasseWebsite.Pages.Admin.LoginModel
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    /* Estilos isolados apenas para esta página de login, sem quebrar o site.css */
+    .login-page-wrapper {
+        width: 100%;
+        min-height: 75vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa !important; /* Fundo cinza claro para destacar a caixa */
+        padding: 40px 20px;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 420px;
+        padding: 40px 35px;
+        background: #ffffff !important; /* Força o fundo da caixinha a ser branco */
+        border: 1px solid #eaeaea !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+        color: #333333 !important; /* Força os textos a ficarem escuros e legíveis */
+    }
+
+    .login-header h2 {
+        font-size: 2rem !important;
+        font-family: 'Georgia', serif;
+        font-weight: 700 !important;
+        color: #C00000 !important; /* Vermelho Strasse */
+        margin-bottom: 10px !important;
+    }
+
+    .login-header p {
+        font-size: 0.9rem !important;
+        color: #666666 !important;
+        line-height: 1.5 !important;
+    }
+
+    .login-container .form-group {
+        margin-bottom: 22px !important;
+    }
+
+    .login-container label {
+        display: block !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        margin-bottom: 8px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        color: #444444 !important;
+    }
+
+    .login-container .form-control {
+        width: 100% !important;
+        padding: 12px 14px !important;
+        font-size: 15px !important;
+        background-color: #ffffff !important;
+        border: 1px solid #cccccc !important;
+        border-radius: 4px !important;
+        color: #333333 !important;
+    }
+
+    .login-container .form-control:focus {
+        border-color: #C00000 !important;
+        box-shadow: 0 0 0 0.2rem rgba(192, 0, 0, 0.25) !important;
+    }
+
+    /* FORÇANDO O BOTÃO DE ENTRAR A APARECER */
+    .btn-submit-login {
+        display: block !important;
+        width: 100% !important;
+        padding: 14px !important;
+        background-color: #C00000 !important; /* Vermelho Strasse */
+        color: #ffffff !important; /* Texto Branco */
+        border: none !important;
+        border-radius: 4px !important;
+        font-size: 15px !important;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        cursor: pointer !important;
+        transition: background-color 0.2s ease-in-out !important;
+        margin-top: 15px !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .btn-submit-login:hover {
+        background-color: #8A0000 !important; /* Vermelho mais escuro no hover */
+        box-shadow: 0 4px 12px rgba(192, 0, 0, 0.2) !important;
+    }
+
+    .alert-danger {
+        padding: 12px !important;
+        background-color: #fde8e8 !important;
+        border: 1px solid #f8b4b4 !important;
+        color: #9b1c1c !important;
+        border-radius: 4px !important;
+        font-size: 14px !important;
+        margin-bottom: 20px !important;
+        text-align: center !important;
+    }
+</style>
+
+<div class="login-page-wrapper">
+    <div class="login-container">
+        <div class="login-header">
+            <h2>Strasse Imóveis</h2>
+            <p>Conecte-se para gerenciar seus imóveis e acessar sua conta exclusiva.</p>
+        </div>
+        
+        @if (!string.IsNullOrEmpty(Model.MensagemErro))
+        {
+            <div class="alert alert-danger">@Model.MensagemErro</div>
+        }
+
+        <form method="post">
+            <div class="form-group">
+                <label>Usuário ou E-mail</label>
+                <input type="text" name="usuario" class="form-control" placeholder="Digite seu usuário" required />
+            </div>
+            <div class="form-group">
+                <label>Senha de Acesso</label>
+                <input type="password" name="senha" class="form-control" placeholder="••••••••" required />
+            </div>
+            
+            <button type="submit" class="btn-submit-login">Entrar na Conta</button>
+        </form>
+    </div>
+</div>

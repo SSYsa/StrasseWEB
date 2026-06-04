@@ -1,0 +1,1684 @@
+/* ==========================================
+   1. CONFIGURAÇÕES GERAIS E RESETS
+   ========================================== */
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 60px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Remove contorno azul nativo do Bootstrap ao focar elementos */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #C00000 !important; /* Brilho em Vermelho Strasse */
+}
+
+/* Remove estilos padrões de links do Bootstrap */
+a {
+    text-decoration: none !important;
+}
+
+/* ==========================================
+   2. BLOCO 1: HEADER (NAVBAR BRANCO ESFUMAÇADO)
+   ========================================== */
+.main-header {
+    position: absolute; /* Faz o menu flutuar sobre o banner */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    /* Fundo branco esfumaçado com 65% de opacidade + desfoque de fundo */
+    background-color: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between; /* Separa logo, menu e botões */
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* Ajuste da Logo (Globo) */
+.header-logo .logo-icon {
+    height: 45px;
+    width: auto;
+    display: block;
+}
+
+/* Menu Central */
+.header-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+.header-nav a,
+.header-nav a:visited {
+    color: #333333 !important; /* Texto escuro fixado para contraste no fundo branco */
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: color 0.2s ease-in-out;
+}
+
+    .header-nav a:hover {
+        color: #C00000 !important;
+    }
+
+/* Empurra todo o conteúdo para baixo do menu fixo */
+main, .main-content, .container-principal {
+    padding-top: 70px; /* Ajuste esse valor de acordo com a altura do seu menu */
+}
+/* Botões de Ação (Direita) */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Estilo do Botão de Login na Barra Superior */
+.btn-login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .btn-login:hover {
+        color: #000000;
+        background: #ffffff;
+        border-color: #ffffff;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    }
+
+/* Links auxiliares como o telefone no topo */
+.top-link-phone {
+    color: #C00000 !important;
+    text-decoration: none;
+    margin-right: 20px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Botão Entrar (Secundário) */
+.header-actions .btn-secondary {
+    background: transparent !important;
+    border: 2px solid #C00000 !important;
+    color: #C00000 !important;
+    padding: 8px 22px !important;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+    .header-actions .btn-secondary:hover {
+        background-color: rgba(192, 0, 0, 0.05) !important;
+        color: #8A0000 !important;
+    }
+
+/* Botão Cadastre-se (Primário) */
+.header-actions .btn-primary {
+    background-color: #C00000 !important;
+    border: none !important;
+    color: white !important;
+    padding: 8px 22px !important;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: background-color 0.2s;
+}
+
+    .header-actions .btn-primary:hover {
+        background-color: #8A0000 !important;
+    }
+
+/* ==========================================
+   3. BLOCO 2: HERO BANNER (SEÇÃO VERMELHA)
+   ========================================== */
+.hero-banner {
+    background-color: #C00000;
+    padding: 140px 20px 80px 20px; /* Aumentado padding-top para compensar o menu flutuante */
+    text-align: center;
+    color: #ffffff;
+    width: 100%;
+}
+
+.hero-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Nome Strasse Imóveis */
+.hero-brand {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    font-family: 'Georgia', serif;
+}
+
+    .hero-brand span {
+        font-weight: 300;
+    }
+
+/* Caixa do Slogan */
+.hero-slogan-box {
+    margin-bottom: 40px;
+}
+
+    .hero-slogan-box h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .hero-slogan-box p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+/* Barra de Pesquisa (Filtros) */
+.search-bar-container {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.search-field {
+    flex: 1;
+    min-width: 220px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    /* Estilo das Labels */
+    .search-field label {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Estilo das Comboboxes (Selects) */
+    .search-field select {
+        width: 100%;
+        padding: 12px 15px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #333;
+        background-color: #ffffff;
+        outline: none;
+        cursor: pointer;
+        height: 48px;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+    }
+
+        .search-field select:focus {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+        }
+
+/* Botão Buscar */
+.search-action {
+    min-width: 140px;
+}
+
+.btn-search {
+    width: 100%;
+    height: 48px;
+    background-color: #E0E0E0;
+    color: #333;
+    border: none;
+    padding: 0 20px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+    .btn-search:hover {
+        background-color: #CCCCCC;
+    }
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .main-header {
+        position: relative; /* Volta a ocupar espaço normal em mobile para não cobrir conteúdo */
+        background-color: #ffffff !important;
+    }
+
+    .hero-banner {
+        padding-top: 60px;
+    }
+
+    .search-bar-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-action {
+        margin-top: 10px;
+    }
+
+    .hero-brand {
+        font-size: 2rem;
+    }
+
+    .hero-slogan-box h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ==========================================
+   4. BLOCO 3: IMÓVEIS À VENDA (CARDS)
+   ========================================== */
+.properties-section {
+    padding: 60px 20px;
+    background-color: #ffffff;
+    width: 100%;
+}
+
+.properties-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+    .section-header h2 {
+        font-size: 2.2rem;
+        color: #333333;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+.title-line {
+    width: 60px;
+    height: 4px;
+    background-color: #C00000;
+    margin: 0 auto;
+    border-radius: 2px;
+}
+
+.properties-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.property-card {
+    background-color: #F4F4F4 !important;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #EAEAEA;
+}
+
+    .property-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+.card-image {
+    position: relative;
+    height: 220px;
+    background-color: #EAEAEA;
+}
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.badge-status {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background-color: #C00000;
+    color: #ffffff;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.property-price {
+    font-size: 1.5rem;
+    color: #C00000;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+}
+
+.property-title {
+    font-size: 1.1rem;
+    color: #333333;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.property-location {
+    font-size: 0.9rem;
+    color: #777777;
+    margin: 0 0 15px 0;
+}
+
+.property-details {
+    display: flex;
+    gap: 15px;
+    border-top: 1px solid #DDDDDD;
+    padding-top: 15px;
+    font-size: 0.85rem;
+    color: #555555;
+    font-weight: 500;
+}
+
+@media (max-width: 992px) {
+    .properties-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .properties-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================
+   5. BLOCO 4: INSTITUCIONAL & QUERO CONSTRUIR
+   ========================================== */
+.about-section {
+    padding: 60px 20px;
+    background-color: #ffffff;
+    width: 100%;
+}
+
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.build-banner {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.btn-build-highlight {
+    display: inline-block;
+    background-color: #C00000;
+    color: #ffffff !important;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 16px 35px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(192, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .btn-build-highlight:hover {
+        background-color: #8A0000;
+        transform: scale(1.03);
+        box-shadow: 0 6px 20px rgba(192, 0, 0, 0.4);
+    }
+
+.icon-hammer {
+    margin-right: 8px;
+}
+
+.about-content-wrapper {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+}
+
+.about-image-box {
+    flex: 1;
+    min-width: 300px;
+}
+
+    .about-image-box img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+.about-text-box {
+    flex: 1;
+    text-align: left;
+}
+
+.about-subtitle {
+    color: #C00000;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.about-text-box h2 {
+    font-size: 2.2rem;
+    color: #2C1414;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+}
+
+.title-line-left {
+    width: 50px;
+    height: 4px;
+    background-color: #C00000;
+    border-radius: 2px;
+    margin-bottom: 25px;
+}
+
+.about-description {
+    font-size: 1.05rem;
+    color: #555555;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.about-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 35px 0;
+}
+
+    .about-features li {
+        font-size: 1rem;
+        color: #444444;
+        margin-bottom: 18px;
+        position: relative;
+        padding-left: 30px;
+        line-height: 1.5;
+        text-align: left;
+    }
+
+.feature-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #C00000;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.btn-about-action {
+    display: inline-block;
+    background-color: #2C1414;
+    color: #ffffff !important;
+    padding: 12px 30px;
+    font-weight: bold;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s;
+}
+
+    .btn-about-action:hover {
+        background-color: #1E0A0A;
+    }
+
+@media (max-width: 768px) {
+    .about-content-wrapper {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .about-text-box {
+        text-align: center;
+    }
+
+    .title-line-left {
+        margin: 0 auto 25px auto;
+    }
+}
+
+/* ==========================================
+   6. BLOCO 5: FOOTER (RODAPÉ ESCURO)
+   ========================================== */
+.main-footer {
+    background-color: #2C1414;
+    color: #DDDDDD;
+    padding: 60px 0 0 0;
+    width: 100%;
+    font-size: 14px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    padding: 0 20px 40px 20px;
+    flex-wrap: wrap;
+}
+
+.footer-col {
+    flex: 1;
+    min-width: 200px;
+}
+
+    .footer-col.col-brand p {
+        margin-top: 15px;
+        line-height: 1.6;
+        color: #BBBBBB;
+    }
+
+.footer-logo-icon {
+    height: 40px;
+    width: auto;
+    filter: brightness(0) invert(1);
+}
+
+.footer-col h3 {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .footer-col ul li {
+        margin-bottom: 12px;
+    }
+
+    .footer-col ul a {
+        color: #BBBBBB !important;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+        .footer-col ul a:hover {
+            color: #C00000 !important;
+        }
+
+.col-contact p {
+    margin-bottom: 12px;
+    color: #BBBBBB;
+}
+
+.footer-bottom {
+    background-color: #1E0A0A;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.footer-bottom-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    align-items: center;
+    color: #888888;
+    font-size: 13px;
+}
+
+    .footer-bottom-container p {
+        margin: 0;
+    }
+
+.footer-privacy-links a {
+    color: #888888 !important;
+}
+
+    .footer-privacy-links a:hover {
+        color: #ffffff !important;
+    }
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .footer-bottom-container {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}
+
+/* ==========================================
+   7. TELA DE LISTAGEM (FILTROS E LINHAS)
+   ========================================== */
+.list-page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    gap: 30px;
+    padding: 30px 20px;
+    background-color: #ffffff;
+}
+
+.filter-sidebar {
+    width: 320px;
+    min-width: 320px;
+    border-right: 1px solid #EAEAEA;
+    padding-right: 25px;
+}
+
+.filter-group-tabs {
+    display: flex;
+    border-bottom: 2px solid #EEEEEE;
+    margin-bottom: 25px;
+    gap: 5px;
+}
+
+    .filter-group-tabs .tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 10px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #666666;
+        cursor: pointer;
+        position: relative;
+    }
+
+        .filter-group-tabs .tab-btn.active {
+            color: #C00000;
+        }
+
+            .filter-group-tabs .tab-btn.active::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background-color: #C00000;
+            }
+
+.filter-block {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #F4F4F4;
+    padding-bottom: 20px;
+}
+
+    .filter-block h3 {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333333;
+        margin-bottom: 15px;
+        text-transform: none;
+    }
+
+.check-container {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555555;
+    user-select: none;
+}
+
+    .check-container input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+.checkmark {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px;
+}
+
+.check-container:hover input ~ .checkmark {
+    border-color: #C00000;
+}
+
+.check-container input:checked ~ .checkmark {
+    background-color: #C00000;
+    border-color: #C00000;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.check-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.check-container .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.filter-link {
+    font-size: 13px;
+    color: #C00000 !important;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.btn-group-filter {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-round {
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    border: 1px solid #CCCCCC;
+    background: #FFFFFF;
+    color: #444444;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+    .btn-round:hover, .btn-round.active {
+        border-color: #C00000;
+        color: #C00000;
+        background-color: rgba(192, 0, 0, 0.03);
+    }
+
+.input-range-group {
+    display: flex;
+    gap: 12px;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    padding: 0 10px;
+    flex: 1;
+}
+
+    .input-box .unit {
+        font-size: 13px;
+        color: #888888;
+        margin-right: 5px;
+    }
+
+    .input-box input {
+        border: none;
+        outline: none;
+        width: 100%;
+        padding: 10px 0;
+        font-size: 14px;
+    }
+
+.sidebar-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-clean-filter {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #CCCCCC;
+    padding: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-apply-filter {
+    flex: 2;
+    background-color: #C00000;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.results-content {
+    flex: 1;
+}
+
+.search-top-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.input-search-location {
+    flex: 1;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    padding: 12px 15px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.btn-alert, .btn-map {
+    background: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    padding: 0 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.quick-tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+    .quick-tags .tag {
+        border: 1px solid #CCCCCC;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #555555;
+    }
+
+.results-counter-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #EEEEEE;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+    .results-counter-row h2 {
+        font-size: 16px;
+        color: #444444;
+        margin: 0;
+        font-weight: 400;
+    }
+
+.btn-sort {
+    background: transparent;
+    border: 1px solid #CCCCCC;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.horizontal-property-card {
+    display: flex;
+    border: 1px solid #EAEAEA;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background-color: #F4F4F4;
+    transition: box-shadow 0.2s;
+}
+
+    .horizontal-property-card:hover {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+
+.card-left-img {
+    width: 300px;
+    min-width: 300px;
+    height: 200px;
+}
+
+    .card-left-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.card-right-info {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.property-type-tag {
+    font-size: 12px;
+    color: #777777;
+}
+
+.btn-favorite {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.property-list-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333333;
+    margin: 0 0 2px 0;
+}
+
+.property-list-address {
+    font-size: 13px;
+    color: #777777;
+    margin: 0 0 15px 0;
+}
+
+.property-list-specs {
+    display: flex;
+    gap: 15px;
+    font-size: 13px;
+    color: #555555;
+    margin-bottom: auto;
+}
+
+.card-info-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid #E2E2E2;
+    padding-top: 12px;
+}
+
+.price-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.main-price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.sub-price {
+    font-size: 11px;
+    color: #888888;
+}
+
+.btn-contact-action {
+    background-color: #C00000;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .btn-contact-action:hover {
+        background-color: #8A0000;
+    }
+
+.modo-imobiliaria .filter-construtora-block {
+    display: none !important;
+}
+
+.modo-construtora .filter-construtora-block {
+    display: block !important;
+}
+
+/* ==========================================
+   8. TELA DE DETALHES DO IMÓVEL
+   ========================================== */
+.property-details-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.back-to-list {
+    margin-bottom: 20px;
+}
+
+    .back-to-list a {
+        color: #C00000 !important;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+.property-gallery {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.main-photo {
+    flex: 2;
+    height: 445px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .main-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.thumbs-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    height: 445px;
+}
+
+    .thumbs-grid img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+        .thumbs-grid img:hover {
+            opacity: 0.9;
+        }
+
+.more-photos-thumb {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.overlay-count {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.details-content-grid {
+    display: flex;
+    gap: 40px;
+}
+
+.info-column {
+    flex: 2;
+}
+
+.contact-sidebar {
+    flex: 1;
+    min-width: 360px;
+}
+
+.property-main-header h1 {
+    font-size: 28px;
+    color: #333333;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.location-text {
+    color: #666666;
+    font-size: 14px;
+}
+
+.specs-ribbon {
+    display: flex;
+    gap: 20px;
+    background-color: #F8F8F8;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 25px 0;
+}
+
+.spec-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-right: 1px solid #EAEAEA;
+}
+
+    .spec-item:last-child {
+        border-right: none;
+    }
+
+.spec-icon {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.spec-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.spec-label {
+    font-size: 12px;
+    color: #777777;
+}
+
+.price-details-box {
+    margin-bottom: 30px;
+}
+
+.price-value-main {
+    font-size: 32px;
+    font-weight: bold;
+    color: #C00000;
+}
+
+.fees-row {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #666666;
+    display: flex;
+    gap: 20px;
+}
+
+.description-section h2, .features-section h2 {
+    font-size: 20px;
+    color: #333333;
+    border-bottom: 2px solid #F0F0F0;
+    padding-bottom: 8px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.description-section p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555555;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.feature-tag-item {
+    font-size: 14px;
+    color: #555555;
+}
+
+.sticky-contact-box {
+    position: sticky;
+    top: 20px;
+    background: #FFFFFF;
+    border: 1px solid #E2E2E2;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+    .sticky-contact-box h3 {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333333;
+        margin-bottom: 8px;
+    }
+
+.sidebar-subtitle {
+    font-size: 13px;
+    color: #777777;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.contact-property-form .form-group {
+    margin-bottom: 15px;
+}
+
+.contact-property-form label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #555555;
+    margin-bottom: 5px;
+}
+
+.contact-property-form input, .contact-property-form textarea {
+    width: 100%;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+    .contact-property-form input:focus, .contact-property-form textarea:focus {
+        border-color: #C00000;
+    }
+
+.btn-send-lead {
+    width: 100%;
+    background-color: #C00000;
+    color: white;
+    border: none;
+    padding: 14px;
+    font-weight: bold;
+    font-size: 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+    .btn-send-lead:hover {
+        background-color: #8A0000;
+    }
+
+.direct-whatsapp-box {
+    margin-top: 20px;
+    border-top: 1px solid #EAEAEA;
+    padding-top: 15px;
+    text-align: center;
+}
+
+    .direct-whatsapp-box span {
+        font-size: 12px;
+        color: #777777;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+.btn-whatsapp-direct {
+    display: block;
+    background-color: #25D366;
+    color: white !important;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* ==========================================
+   9. PÁGINAS INSTITUCIONAIS E FORMULÁRIOS
+   ========================================== */
+.institutional-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.inst-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+    .inst-header h1 {
+        font-size: 36px;
+        color: #33;
+        font-weight: bold;
+    }
+
+    .inst-header p {
+        color: #777;
+        font-size: 16px;
+    }
+
+.inst-content-row {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.inst-text {
+    flex: 1;
+}
+
+    .inst-text h2 {
+        font-size: 24px;
+        color: #33;
+        margin-bottom: 15px;
+    }
+
+    .inst-text p {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+.inst-image {
+    flex: 1;
+}
+
+    .inst-image img {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+.section-divider {
+    border: 0;
+    height: 1px;
+    background: #EEE;
+    margin: 40px 0;
+}
+
+.profiles-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+    color: #33;
+}
+
+.profiles-grid {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+.profile-card {
+    background: #F9F9F9;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 380px;
+    flex: 1;
+}
+
+    .profile-card img {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 3px solid #C00000;
+    }
+
+    .profile-card h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+        color: #33;
+    }
+
+.profile-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #C00000;
+    margin-bottom: 12px;
+}
+
+.profile-card p {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.form-page-container {
+    background-color: #F4F4F4;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.form-card {
+    background: #FFF;
+    padding: 40px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 650px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+    .form-card h2 {
+        font-size: 26px;
+        color: #33;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+.form-subtitle {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+    .form-row .form-group {
+        flex: 1;
+    }
+
+.select-input, .file-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    background: #FFF;
+}
+
+.partnership-notice {
+    background: rgba(192, 0, 0, 0.05);
+    border-left: 4px solid #C00000;
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.btn-submit-form {
+    width: 100%;
+    background: #C00000;
+    color: #FFF;
+    border: none;
+    padding: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+    .btn-submit-form:hover {
+        background: #8A0000;
+    }
+/* ===================================================
+   CORREÇÃO ISOLADA APENAS PARA A TELA DE LOGIN
+   (Adicione isso no final do seu site.css original)
+   =================================================== */
+
+/* Aplica o fundo claro apenas se você colocar essa classe no <body> da View de Login */
+body.login-page-body {
+    background-color: #f8f9fa !important;
+}
+
+/* Garante que o botão de login do topo do menu continue visível */
+.main-header .btn-login {
+    color: #333333 !important;
+    border-color: #333333 !important;
+}
+
+    .main-header .btn-login:hover {
+        color: #ffffff !important;
+        background-color: #333333 !important;
+    }
+
+/* Estilização exclusiva do container de login */
+.login-page-wrapper {
+    width: 100%;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 35px;
+    background: #ffffff !important; /* Força o fundo branco na caixinha */
+    border: 1px solid #eaeaea !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+    color: #333333 !important; /* Força os textos ficarem escuros */
+}
+
+.login-header h2 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    color: #C00000 !important; /* Vermelho Strasse */
+    margin-bottom: 10px !important;
+}
+
+.login-header p {
+    color: #666666 !important;
+}
+
+/* Inputs de texto dentro da caixinha de login */
+.login-container .form-group {
+    margin-bottom: 20px !important;
+}
+
+.login-container label {
+    color: #444444 !important;
+    font-weight: 600 !important;
+}
+
+.login-container .form-control {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #cccccc !important;
+}
+
+    .login-container .form-control:focus {
+        border-color: #C00000 !important;
+        box-shadow: 0 0 0 0.25rem rgba(192, 0, 0, 0.25) !important;
+    }
+
+/* Botão de Entrar */
+.btn-submit-login {
+    width: 100%;
+    padding: 14px;
+    background-color: #C00000 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-weight: bold !important;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+    .btn-submit-login:hover {
+        background-color: #8A0000 !important;
+    }
