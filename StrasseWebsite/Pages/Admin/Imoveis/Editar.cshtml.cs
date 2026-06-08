@@ -45,23 +45,49 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // 1. Remove validações de objetos de navegação que o formulário não preenche
             ModelState.Remove("Imovel.Proprietario");
             ModelState.Remove("Imovel.Corretor");
+            ModelState.Remove("Imovel.ImagensSecundarias"); // Adicione se houver essa lista no Model
 
             if (!ModelState.IsValid)
             {
+                // Se cair aqui, as listas recarregam e a página é exibida com os erros
                 var pessoas = await _context.Pessoas.ToListAsync();
                 ProprietariosList = new SelectList(pessoas, "Id", "Nome");
                 CorretoresList = new SelectList(pessoas, "Id", "Nome");
                 return Page();
             }
 
-            // Atualiza os dados bases do Imóvel no EF Core
-            _context.Attach(Imovel).State = EntityState.Modified;
-            _context.Entry(Imovel).Property(x => x.DataCadastro).IsModified = false;
-            _context.Entry(Imovel).Property(x => x.CodigoImovel).IsModified = false;
+            // 2. Busca o imóvel original do banco para evitar perda de dados omitidos
+            var imovelBanco = await _context.Imoveis
+                .Include(i => i.ImagensSecundarias)
+                .FirstOrDefaultAsync(i => i.Id == Imovel.Id);
 
-            // Processa os links múltiplos de imagem adicionados (separados por vírgula ou quebra de linha)
+            if (imovelBanco == null)
+            {
+                return NotFound();
+            }
+
+            // 3. Atualiza apenas os campos permitidos da tela
+            imovelBanco.Titulo = Imovel.Titulo;
+            imovelBanco.Descricao = Imovel.Descricao;
+            imovelBanco.Preco = Imovel.Preco;
+            imovelBanco.CidadeEstado = Imovel.CidadeEstado;
+            imovelBanco.Bairro = Imovel.Bairro;
+            imovelBanco.Endereco = Imovel.Endereco;
+            imovelBanco.QuantidadeQuartos = Imovel.QuantidadeQuartos;
+            imovelBanco.QuantidadeBanheiros = Imovel.QuantidadeBanheiros;
+            imovelBanco.QuantidadeVagasGaragem = Imovel.QuantidadeVagasGaragem;
+            imovelBanco.ProprietarioId = Imovel.ProprietarioId;
+            imovelBanco.CorretorId = Imovel.CorretorId;
+            imovelBanco.Tipo = Imovel.Tipo;
+            imovelBanco.Transacao = Imovel.Transacao;
+            imovelBanco.UrlImagemPrincipal = Imovel.UrlImagemPrincipal;
+            imovelBanco.Status = Imovel.Status;
+            imovelBanco.ConstrutoraResponsavel = Imovel.ConstrutoraResponsavel;
+
+            // 4. Processa os links múltiplos de imagem
             if (!string.IsNullOrEmpty(NovasImagensLinks))
             {
                 var links = NovasImagensLinks.Split(new[] { ',', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
@@ -69,14 +95,16 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
                 {
                     _context.ImagensImoveis.Add(new ImagemImovel
                     {
-                        ImovelId = Imovel.Id,
+                        ImovelId = imovelBanco.Id,
                         UrlImagem = link.Trim()
                     });
                 }
             }
 
+            // 5. Salva as alterações rastreadas
             await _context.SaveChangesAsync();
-            TempData["MensagemSucesso"] = $"Imóvel {Imovel.CodigoImovel} atualizado com sucesso!";
+
+            TempData["MensagemSucesso"] = $"Imóvel {imovelBanco.CodigoImovel} atualizado com sucesso!";
             return RedirectToPage("/Admin/Dashboard");
         }
     }
