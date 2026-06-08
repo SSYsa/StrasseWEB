@@ -1682,3 +1682,17 @@ body.login-page-body {
     .btn-submit-login:hover {
         background-color: #8A0000 !important;
     }
+
+/* Garante que o link não quebre o layout da Grid e remova estilos padrão de link */
+.property-card-link {
+    text-decoration: none;
+    color: inherit; /* Mantém as cores originais dos textos do card */
+    display: block;
+    transition: transform 0.2s ease-in-out;
+}
+
+    /* Efeito opcional: Levanta levemente o card quando o usuário passar o mouse */
+    .property-card-link:hover {
+        transform: translateY(-5px);
+        text-decoration: none;
+    }

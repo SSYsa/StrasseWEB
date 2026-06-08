@@ -60,104 +60,55 @@
             <div class="title-line"></div>
         </div>
 
+        <section class="properties-section">
+    <div class="properties-container">
+
+        <div class="section-header">
+            <h2>Imóveis em Destaque</h2>
+            <div class="title-line"></div>
+        </div>
+
+        <section class="properties-section">
+    <div class="properties-container">
+
+        <div class="section-header">
+            <h2>Imóveis em Destaque</h2>
+            <div class="title-line"></div>
+        </div>
+
         <div class="properties-grid">
-
-            <div class="property-card">
-                <div class="card-image">
-                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
-                    <span class="badge-status">Venda</span>
+            @if (Model.ImoveisHome != null && Model.ImoveisHome.Any())
+            {
+                @foreach (var imovel in Model.ImoveisHome)
+                {
+                    <a href="/Imovel/Detalhes?id=@imovel.Id" class="property-card-link">
+                        <div class="property-card">
+                            <div class="card-image">
+                                <img src="@imovel.UrlImagemPrincipal" alt="@imovel.Titulo" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
+                                
+                                <span class="badge-status">
+                                    @(imovel.Status == "Usado" ? "Venda" : "Em Construção")
+                                </span>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="property-price">@imovel.Preco.ToString("C0", new System.Globalization.CultureInfo("pt-BR"))</h3>
+                                <h4 class="property-title">@imovel.Titulo</h4>
+                                <p class="property-location">@imovel.Bairro, @imovel.CidadeEstado - @imovel.CidadeEstado</p>
+                                <div class="property-details">
+                                    <span>@imovel.QuantidadeQuartos Quartos</span>
+                                    <span>@imovel.QuantidadeVagasGaragem Vagas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <div class="no-properties">
+                    <p>Nenhum imóvel disponível no momento.</p>
                 </div>
-                <div class="card-content">
-                    <h3 class="property-price">R$ 520.000</h3>
-                    <h4 class="property-title">Casa de Alvenaria Moderna</h4>
-                    <p class="property-location">Vila Nova, Blumenau - SC</p>
-                    <div class="property-details">
-                        <span>3 Quartos</span>
-                        <span>2 Vagas</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="property-card">
-                <div class="card-image">
-                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
-                    <span class="badge-status">Venda</span>
-                </div>
-                <div class="card-content">
-                    <h3 class="property-price">R$ 380.000</h3>
-                    <h4 class="property-title">Apartamento com Sacada</h4>
-                    <p class="property-location">Itoupava Seca, Blumenau - SC</p>
-                    <div class="property-details">
-                        <span>2 Quartos</span>
-                        <span>1 Vaga</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="property-card">
-                <div class="card-image">
-                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
-                    <span class="badge-status">Venda</span>
-                </div>
-                <div class="card-content">
-                    <h3 class="property-price">R$ 890.000</h3>
-                    <h4 class="property-title">Sobrado Alto Padrão</h4>
-                    <p class="property-location">Victor Konder, Blumenau - SC</p>
-                    <div class="property-details">
-                        <span>4 Quartos</span>
-                        <span>3 Vagas</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="property-card">
-                <div class="card-image">
-                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
-                    <span class="badge-status">Venda</span>
-                </div>
-                <div class="card-content">
-                    <h3 class="property-price">R$ 450.000</h3>
-                    <h4 class="property-title">Casa Residencial Ampla</h4>
-                    <p class="property-location">Escola Agrícola, Blumenau - SC</p>
-                    <div class="property-details">
-                        <span>3 Quartos</span>
-                        <span>2 Vagas</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="property-card">
-                <div class="card-image">
-                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
-                    <span class="badge-status">Venda</span>
-                </div>
-                <div class="card-content">
-                    <h3 class="property-price">R$ 320.000</h3>
-                    <h4 class="property-title">Apartamento Pronto para Morar</h4>
-                    <p class="property-location">Água Verde, Blumenau - SC</p>
-                    <div class="property-details">
-                        <span>2 Quartos</span>
-                        <span>1 Vaga</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="property-card">
-                <div class="card-image">
-                    <img src="/images/imovel-exemplo.jpg" alt="Imóvel Strasse" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />
-                    <span class="badge-status">Venda</span>
-                </div>
-                <div class="card-content">
-                    <h3 class="property-price">R$ 1.200.000</h3>
-                    <h4 class="property-title">Terreno em Condomínio Fechado</h4>
-                    <p class="property-location">Centro, Blumenau - SC</p>
-                    <div class="property-details">
-                        <span>0 Quartos</span>
-                        <span>0 Vagas</span>
-                    </div>
-                </div>
-            </div>
-
+            }
         </div>
     </div>
 </section>
