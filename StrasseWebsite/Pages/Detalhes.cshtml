@@ -1,10 +1,20 @@
 ﻿@page
 @model StrasseWebsite.Pages.DetalhesModel
 @{
-    ViewData["Title"] = Model.Operacao == "construir" ? "Detalhes do Projeto de Construção" : "Detalhes do Imóvel";
-}
+    // Evita quebra de página se o imóvel sumir do banco
+    if (Model.Imovel == null)
+    {
+        <div class="container text-center my-5">
+            <h2>Imóvel não encontrado</h2>
+            <a href="/Listagem" class="btn btn-primary">Voltar para a listagem</a>
+        </div>
+        return;
+    }
 
-<div class="property-details-container">
+    ViewData["Title"] = Model.Operacao == "construir" ? "Detalhes do Projeto de Construção" : "Detalhes do Imóvel";
+    var culturaBr = new System.Globalization.CultureInfo("pt-BR");
+}
+<div class="property-details-container @(Model.Operacao == "construir" ? "modo-construtora" : "modo-imobiliaria")">
 
     <div class="back-to-list">
         <a href="/Listagem?operacao=@Model.Operacao">‹ Voltar para a listagem</a>
@@ -12,9 +22,11 @@
 
     <section class="property-gallery">
         <div class="main-photo">
-            <img src="@(string.IsNullOrEmpty(Model.Imovel.UrlImagemPrincipal) ? "https://placehold.co/800x450?text=Sem+Foto" : Model.Imovel.UrlImagemPrincipal)" alt="@Model.Imovel.Titulo">
+            <img id="mainPhoto" src="@(string.IsNullOrEmpty(Model.Imovel.UrlImagemPrincipal) ? "https://placehold.co/800x450?text=Sem+Foto" : Model.Imovel.UrlImagemPrincipal)" alt="@Model.Imovel.Titulo" style="cursor: pointer; transition: opacity 0.2s;">
         </div>
         <div class="thumbs-grid">
+            <img src="@(string.IsNullOrEmpty(Model.Imovel.UrlImagemPrincipal) ? "https://placehold.co/800x450?text=Sem+Foto" : Model.Imovel.UrlImagemPrincipal)" class="thumb-img" alt="Miniatura Principal" style="cursor: pointer;">
+
             @if (Model.Imovel.ImagensSecundarias != null && Model.Imovel.ImagensSecundarias.Any())
             {
                 var fotosExibidas = Model.Imovel.ImagensSecundarias.Take(4).ToList();
@@ -24,23 +36,22 @@
                 {
                     if (i == 3 && totalFotos > 4)
                     {
-                        <!-- Se houver mais de 4 fotos secundárias, cria a caixa com o contador "+X" -->
-                        <div class="more-photos-thumb" style="position: relative; display: block; height: 100%;">
+                        <div class="more-photos-thumb thumb-img" style="position: relative; display: block; height: 100%; cursor: pointer;">
                             <img src="@fotosExibidas[i].UrlImagem" alt="Miniatura @(i + 2)" style="width: 100%; height: 100%; object-fit: cover;">
                             <span class="overlay-count" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">+@(totalFotos - 3)</span>
                         </div>
                     }
                     else
                     {
-                        <img src="@fotosExibidas[i].UrlImagem" alt="Miniatura @(i + 2)">
+                        <img src="@fotosExibidas[i].UrlImagem" class="thumb-img" alt="Miniatura @(i + 2)" style="cursor: pointer;">
                     }
                 }
             }
             else
             {
-                <img src="https://placehold.co/200x135?text=Strasse+1" alt="Miniatura Padrão">
-                <img src="https://placehold.co/200x135?text=Strasse+2" alt="Miniatura Padrão">
-                <img src="https://placehold.co/200x135?text=Strasse+3" alt="Miniatura Padrão">
+                <img src="https://placehold.co/200x135?text=Strasse+1" class="thumb-img" alt="Miniatura Padrão" style="cursor: pointer;">
+                <img src="https://placehold.co/200x135?text=Strasse+2" class="thumb-img" alt="Miniatura Padrão" style="cursor: pointer;">
+                <img src="https://placehold.co/200x135?text=Strasse+3" class="thumb-img" alt="Miniatura Padrão" style="cursor: pointer;">
             }
         </div>
     </section>
@@ -80,7 +91,7 @@
             <div class="price-details-box">
                 <div class="price-row">
                     <span class="price-label">Valor do Investimento</span>
-                    <span class="price-value-main">R$ @Model.Imovel.Preco.ToString("N2")</span>
+                    <span class="price-value-main">@Model.Imovel.Preco.ToString("C0", culturaBr)</span>
                 </div>
                 <div class="fees-row">
                     <span><strong>Terreno:</strong> @Model.Imovel.TamanhoTerreno m²</span>
@@ -119,6 +130,17 @@
                     <div class="feature-tag-item">✓ Tipo: @Model.Imovel.Tipo.ToString()</div>
                 </div>
             </div>
+
+            @if (Model.Imovel.Corretor != null)
+            {
+                <div class="broker-info-section" style="margin-top: 40px; padding: 20px; background: #f9f9f9; border-radius: 8px; display: flex; align-items: center; gap: 20px;">
+                    <div class="broker-avatar" style="font-size: 40px;">👤</div>
+                    <div>
+                        <h4 style="margin: 0; font-size: 18px; color: #333;">Atendimento Exclusivo</h4>
+                        <p style="margin: 5px 0 0 0; color: #666; font-size: 16px;">Este imóvel está sob responsabilidade do parceiro Strasse.</p>
+                    </div>
+                </div>
+            }
         </main>
 
         <aside class="contact-sidebar">
@@ -127,6 +149,8 @@
                 <p class="sidebar-subtitle">Preencha o formulário abaixo e nossa equipe da Strasse entrará em contato em minutos.</p>
 
                 <form method="post" class="contact-property-form">
+                    <input type="hidden" name="imovelId" value="@Model.Imovel.Id" />
+
                     <div class="form-group">
                         <label for="txtName">Nome Completo</label>
                         <input type="text" id="txtName" name="name" placeholder="Ex: João Silva" required>
@@ -158,6 +182,35 @@
                 </div>
             </div>
         </aside>
-
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const mainPhoto = document.getElementById("mainPhoto");
+            const thumbnails = document.querySelectorAll(".thumb-img");
+
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener("click", function () {
+                    let newSrc = "";
+
+                    if (this.tagName === "IMG") {
+                        newSrc = this.getAttribute("src");
+                    } else {
+                        const childImg = this.querySelector("img");
+                        if (childImg) newSrc = childImg.getAttribute("src");
+                    }
+
+                    if (newSrc && mainPhoto) {
+                        mainPhoto.style.opacity = "0.3";
+                        setTimeout(() => {
+                            mainPhoto.setAttribute("src", newSrc);
+                            mainPhoto.style.opacity = "1";
+                        }, 150);
+                    }
+                });
+            });
+        });
+    </script>
+}
