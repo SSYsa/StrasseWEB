@@ -51,24 +51,7 @@
         </form>
     </div>
 </section>
-
 <section class="properties-section">
-    <div class="properties-container">
-
-        <div class="section-header">
-            <h2>Imóveis à Venda</h2>
-            <div class="title-line"></div>
-        </div>
-
-        <section class="properties-section">
-    <div class="properties-container">
-
-        <div class="section-header">
-            <h2>Imóveis em Destaque</h2>
-            <div class="title-line"></div>
-        </div>
-
-        <section class="properties-section">
     <div class="properties-container">
 
         <div class="section-header">
@@ -81,7 +64,7 @@
             {
                 @foreach (var imovel in Model.ImoveisHome)
                 {
-                    <a href="/Imovel/Detalhes?id=@imovel.Id" class="property-card-link">
+                    <a href="/Detalhes?id=@imovel.Id" class="property-card-link">
                         <div class="property-card">
                             <div class="card-image">
                                 <img src="@imovel.UrlImagemPrincipal" alt="@imovel.Titulo" onerror="this.src='https://placehold.co/400x250?text=Strasse+Im%C3%B3veis'" />

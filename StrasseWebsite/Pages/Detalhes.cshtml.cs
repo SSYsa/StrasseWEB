@@ -25,30 +25,21 @@ namespace StrasseWebsite.Pages
         // Mantém o controle se o cliente veio da aba comprar ou construir
         public string Operacao { get; set; } = "comprar";
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            // Validação de segurança para ID zerado ou negativo
-            if (Id <= 0)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            // Busca o imóvel no banco trazendo junto as fotos secundárias e os dados do Corretor
-            var imovelBanco = await _context.Imoveis
-                .Include(i => i.ImagensSecundarias)
-                .Include(i => i.Corretor)
-                .FirstOrDefaultAsync(m => m.Id == Id);
+            // Seu código que busca no banco... ex:
+            Imovel = await _context.Imoveis.FindAsync(id);
 
-            // Se o ID não existir no banco, retorna página não encontrada (404)
-            if (imovelBanco == null)
+            if (Imovel == null)
             {
-                return NotFound();
+                // Vai cair na sua validação do HTML e exibir "Imóvel não encontrado" amigavelmente
+                return Page();
             }
-
-            Imovel = imovelBanco;
-
-            // Define dinamicamente o modo da página com base no tipo de transação salvo no banco
-            Operacao = Imovel.Transacao == TipoTransacao.Construcao ? "construir" : "comprar";
 
             return Page();
         }
