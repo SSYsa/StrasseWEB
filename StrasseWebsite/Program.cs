@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using StrasseWebsite.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,17 +30,22 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // =================================================================
 
 var app = builder.Build();
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate(); // Cria as tabelas automaticamente se não existirem
+}
 // Configura o pipeline de requisições HTTP.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // O HSTS só roda em produção, em desenvolvimento usamos HTTP local
+    // O HSTS só roda em produção
     app.UseHsts();
-}
 
-// COMENTADO para evitar o erro de SSL/HTTPS local que travou as portas antes
-// app.UseHttpsRedirection(); 
+    // ATIVA O HTTPS APENAS EM PRODUÇÃO (No Render)
+    // Isso protege o seu login sem quebrar o seu localhost de desenvolvimento!
+    app.UseHttpsRedirection();
+}
 
 app.UseStaticFiles(); // Permite carregar o CSS, imagens e o site.js
 app.UseRouting();
