@@ -45,8 +45,11 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // 1. Remove validações que o formulário não preenche
             ModelState.Remove("Imovel.Proprietario");
             ModelState.Remove("Imovel.Corretor");
+            ModelState.Remove("Imovel.CodigoImovel");
+            ModelState.Remove("Imovel.ImagensSecundarias");
 
             if (!ModelState.IsValid)
             {
@@ -56,28 +59,86 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
                 return Page();
             }
 
-            // Atualiza os dados bases do Imóvel no EF Core
-            _context.Attach(Imovel).State = EntityState.Modified;
-            _context.Entry(Imovel).Property(x => x.DataCadastro).IsModified = false;
-            _context.Entry(Imovel).Property(x => x.CodigoImovel).IsModified = false;
+            // 2. Busca o imóvel do banco TRAZENDO as imagens secundárias atuais (.Include)
+            var imovelBanco = await _context.Imoveis
+                .Include(i => i.ImagensSecundarias)
+                .FirstOrDefaultAsync(i => i.Id == Imovel.Id);
 
-            // Processa os links múltiplos de imagem adicionados (separados por vírgula ou quebra de linha)
+            if (imovelBanco == null)
+            {
+                return NotFound();
+            }
+
+            // 3. Atualiza os dados base do imóvel
+            imovelBanco.Titulo = Imovel.Titulo;
+            imovelBanco.Descricao = Imovel.Descricao;
+            imovelBanco.Preco = Imovel.Preco;
+            imovelBanco.CidadeEstado = Imovel.CidadeEstado;
+            imovelBanco.Bairro = Imovel.Bairro;
+            imovelBanco.Endereco = Imovel.Endereco;
+            imovelBanco.QuantidadeQuartos = Imovel.QuantidadeQuartos;
+            imovelBanco.QuantidadeBanheiros = Imovel.QuantidadeBanheiros;
+            imovelBanco.QuantidadeVagasGaragem = Imovel.QuantidadeVagasGaragem;
+            imovelBanco.ProprietarioId = Imovel.ProprietarioId;
+            imovelBanco.CorretorId = Imovel.CorretorId;
+            imovelBanco.Tipo = Imovel.Tipo;
+            imovelBanco.Transacao = Imovel.Transacao;
+            imovelBanco.UrlImagemPrincipal = Imovel.UrlImagemPrincipal;
+            imovelBanco.Status = Imovel.Status;
+            imovelBanco.ConstrutoraResponsavel = Imovel.ConstrutoraResponsavel;
+
+            // 4. Processa e adiciona os novos links na lista vinculada ao imóvel
             if (!string.IsNullOrEmpty(NovasImagensLinks))
             {
+                // Quebra o texto por vírgula ou quebra de linha
                 var links = NovasImagensLinks.Split(new[] { ',', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
                 foreach (var link in links)
                 {
-                    _context.ImagensImoveis.Add(new ImagemImovel
+                    var urlLimpa = link.Trim();
+                    if (!string.IsNullOrEmpty(urlLimpa))
                     {
-                        ImovelId = Imovel.Id,
-                        UrlImagem = link.Trim()
-                    });
+                        // Adiciona direto na lista do imóvel rastreado pelo EF Core
+                        imovelBanco.ImagensSecundarias.Add(new ImagemImovel
+                        {
+                            UrlImagem = urlLimpa
+                        });
+                    }
                 }
             }
 
+            // 5. Salva tudo de uma vez (Imóvel e Novas Imagens)
             await _context.SaveChangesAsync();
-            TempData["MensagemSucesso"] = $"Imóvel {Imovel.CodigoImovel} atualizado com sucesso!";
+
+            TempData["MensagemSucesso"] = $"Imóvel {imovelBanco.CodigoImovel} atualizado com sucesso!";
             return RedirectToPage("/Admin/Dashboard");
+        }
+        public async Task<IActionResult> OnPostDeletarImagemAsync(int imagemId)
+        {
+            // Busca a imagem diretamente pelo ID dela
+            var imagem = await _context.ImagensImoveis.FindAsync(imagemId);
+
+            if (imagem == null)
+            {
+                return BadRequest(new { sucesso = false, mensagem = "Imagem não encontrada." });
+            }
+
+            try
+            {
+                _context.ImagensImoveis.Remove(imagem);
+                await _context.SaveChangesAsync();
+                return PackageJson(new { sucesso = true }); // Retorna sucesso para o JavaScript
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { sucesso = false, mensagem = ex.Message });
+            }
+        }
+
+        // Auxiliar para retornar JSON no Razor Pages sem complicações
+        private IActionResult PackageJson(object data)
+        {
+            return new JsonResult(data);
         }
     }
 }
