@@ -11,48 +11,57 @@
 </head>
 <body>
     <header class="main-header">
-        <div class="header-container">
-            <div class="header-logo">
-                <a href="/">
-                    <img src="/images/icon/globo.png" alt="Strasse Imóveis" class="logo-icon" />
-                </a>
-            </div>
+    <div class="header-container">
+        <div class="header-logo">
+            <a href="/">
+                <img src="/images/icon/globo.png" alt="Strasse Imóveis" class="logo-icon" />
+            </a>
+        </div>
 
-            <nav class="header-nav">
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/QuemSomos">Quem Somos</a></li>
-                    <li><a href="/Listagem?operacao=comprar">Imobiliária</a></li>
-                    <li><a href="/Listagem?operacao=construir">Construtora</a></li>
-                    <li><a href="/Contato?tipo=carreira">Trabalhe Conosco</a></li>
-                    <li><a href="/Contato?tipo=parceria">Parcerias</a></li>
-                </ul>
-            </nav>
+        <!-- Botão do Menu Hambúrguer (Invisível no Desktop, Visível no Mobile) -->
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Abrir Menu">
+            <i class="fas fa-bars"></i>
+        </button>
 
-            <div class="navbar-right">
-                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    <div class="user-menu-container" style="position: relative; display: inline-block;">
-                        <button class="user-profile-btn" onclick="toggleUserMenu()" style="background: none; border: none; font-size: 24px; cursor: pointer;">
-                            <i class="fas fa-user-circle"></i>
-                        </button>
-                        
-                        <div id="userDropdownModal" class="user-dropdown-modal" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; box-shadow: 0px 4px 8px rgba(0,0,0,0.1); z-index: 1000; min-width: 180px; border-radius: 4px; padding: 10px 0;">
-                            <ul style="list-style: none; padding: 0; margin: 0;">
-                                <li><a href="/Admin/Dashboard" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Painel Administrador</a></li>
-                                <li><a href="/Imoveis/MeusImoveis" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Meus Imóveis</a></li>
-                                <li><a href="/Perfil/MeuPerfil" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Meu Perfil</a></li>
-                                <hr style="margin: 5px 0;" />
-                                <li><a href="/Account/Logout" class="text-danger" style="display: block; padding: 8px 15px; text-decoration: none; font-weight: bold;">Sair</a></li>
-                            </ul>
-                        </div>
+        <!-- Adicionada a classe id "navMenu" para controle via JS -->
+        <nav class="header-nav" id="navMenu">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/QuemSomos">Quem Somos</a></li>
+                <li><a href="/Listagem?operacao=comprar">Imobiliária</a></li>
+                <li><a href="/Listagem?operacao=construir">Construtora</a></li>
+                <li><a href="/Contato?tipo=carreira">Trabalhe Conosco</a></li>
+                <li><a href="/Contato?tipo=parceria">Parcerias</a></li>
+            </ul>
+        </nav>
+
+        <div class="navbar-right">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="user-menu-container" style="position: relative; display: inline-block;">
+                    <button class="user-profile-btn" onclick="toggleUserMenu()" style="background: none; border: none; font-size: 24px; cursor: pointer;">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    
+                    <div id="userDropdownModal" class="user-dropdown-modal" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; box-shadow: 0px 4px 8px rgba(0,0,0,0.1); z-index: 1000; min-width: 180px; border-radius: 4px; padding: 10px 0;">
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li><a href="/Admin/Dashboard" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Painel Administrador</a></li>
+                            <li><a href="/Imoveis/MeusImoveis" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Meus Imóveis</a></li>
+                            <li><a href="/Perfil/MeuPerfil" style="display: block; padding: 8px 15px; color: #333; text-decoration: none;">Meu Perfil</a></li>
+                            <hr style="margin: 5px 0;" />
+                            <li><a href="/Account/Logout" class="text-danger" style="display: block; padding: 8px 15px; text-decoration: none; font-weight: bold;">Sair</a></li>
+                        </ul>
                     </div>
-                }
-                else
-                {
-                    <a href="/Account/Login" class="btn btn-login">Login</a>
-                }
-            </div> </div> </header> <main role="main">
+                </div>
+            }
+            else
+            {
+                <a href="/Account/Login" class="btn btn-login">Login</a>
+            }
+        </div> 
+    </div> 
+</header>
+            <main role="main">
         @RenderBody()
     </main>
 
@@ -121,6 +130,14 @@
                 }
             }
         }
+        function toggleMobileMenu() {
+    var nav = document.getElementById("navMenu");
+    if (nav.classList.contains("active")) {
+        nav.classList.remove("active");
+    } else {
+        nav.classList.add("active");
+    }
+}
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
