@@ -1,143 +1,178 @@
 ﻿@page
 @model StrasseWebsite.Pages.ListagemModel
 @{
-    ViewData["Title"] = Model.Operacao == "construir" ? "Projetos de Construção" : "Imóveis para Compra";
+    ViewData["Title"] = Model.Operacao == "construir" ? "Imóveis Novos & Projetos" : "Imóveis Prontos para Morar";
 }
 
-<!-- Adicionamos uma classe dinâmica baseada no tipo de operação recebida -->
 <div class="list-page-container @(Model.Operacao == "construir" ? "modo-construtora" : "modo-imobiliaria")">
 
     <!-- BARRA LATERAL: FILTROS -->
     <aside class="filter-sidebar">
         <div class="filter-group-tabs">
-            <a href="/Listagem?operacao=comprar" class="tab-btn @(Model.Operacao == "comprar" ? "active" : "")">Comprar</a>
-            <a href="/Listagem?operacao=lancamentos" class="tab-btn @(Model.Operacao == "lancamentos" ? "active" : "")">Lançamentos</a>
-            <a href="/Listagem?operacao=construir" class="tab-btn @(Model.Operacao == "construir" ? "active" : "")">Construções</a>
+            <!-- Normalizado para carregar operacao=comprar ou construir, alinhado com a home -->
+            <a href="/Listagem?operacao=comprar" class="tab-btn @(Model.Operacao == "comprar" ? "active" : "")">Imóveis Prontos</a>
+            <a href="/Listagem?operacao=construir" class="tab-btn @(Model.Operacao == "construir" ? "active" : "")">Projetos & Lançamentos</a>
         </div>
 
-        <form method="get" class="sidebar-form">
-            <!-- Manter o estado da operação ao enviar o formulário -->
+        <form method="get" class="sidebar-form" id="filterForm">
+            <!-- Campos ocultos de controle para persistir dados sem resetar as escolhas -->
             <input type="hidden" name="operacao" value="@Model.Operacao" />
+            <input type="hidden" name="quartos" id="inputQuartos" value="@Model.Quartos" />
+            <input type="hidden" name="banheiros" id="inputBanheiros" value="@Model.Banheiros" />
+            <input type="hidden" name="garagem" id="inputGaragem" value="@Model.Garagem" />
+            <input type="hidden" name="ordenarPor" id="inputOrdenarPor" value="@Model.OrdenarPor" />
 
             <div class="filter-block">
                 <h3>Tipo de Imóvel</h3>
                 <label class="check-container">
+                    Todos os Tipos
+                    <input type="radio" name="tipo" value="" @(string.IsNullOrEmpty(Model.Tipo) ? "checked" : "") onchange="submeterFiltro()">
+                    <span class="checkmark radio-mark"></span>
+                </label>
+                <label class="check-container">
                     Apartamento
-                    <input type="checkbox" name="tipo" value="apartamento">
-                    <span class="checkmark"></span>
+                    <input type="radio" name="tipo" value="Apartamento" @(Model.Tipo == "Apartamento" ? "checked" : "") onchange="submeterFiltro()">
+                    <span class="checkmark radio-mark"></span>
                 </label>
                 <label class="check-container">
                     Casa
-                    <input type="checkbox" name="tipo" value="casa">
-                    <span class="checkmark"></span>
+                    <input type="radio" name="tipo" value="Casa" @(Model.Tipo == "Casa" ? "checked" : "") onchange="submeterFiltro()">
+                    <span class="checkmark radio-mark"></span>
                 </label>
-                <label class="check-container">
-                    Kitnet/Conjugado
-                    <input type="checkbox" name="tipo" value="kitnet">
-                    <span class="checkmark"></span>
-                </label>
-                <a href="#" class="filter-link">Todos os tipos de imóveis ›</a>
             </div>
 
-            <!-- FILTRO DE CONSTRUTORA: Exibido condicionalmente via C# se for o modo construir -->
+            <!-- FILTRO DE CONSTRUTORAS PARCEIRAS -->
             @if (Model.Operacao == "construir")
             {
                 <div class="filter-block filter-construtora-block">
-                    <h3>Construtoras Parceiras</h3>
+                    <h3>Incorporadoras Parceiras</h3>
                     <label class="check-container">
-                        Strasse Engenharia
-                        <input type="checkbox" name="construtora" value="strasse">
-                        <span class="checkmark"></span>
+                        Todas as Construtoras
+                        <input type="radio" name="construtora" value="" @(string.IsNullOrEmpty(Model.Construtora) ? "checked" : "") onchange="submeterFiltro()">
+                        <span class="checkmark radio-mark"></span>
                     </label>
                     <label class="check-container">
-                        Incorporadora Vale
-                        <input type="checkbox" name="construtora" value="vale">
-                        <span class="checkmark"></span>
+                        FG Empreendimentos
+                        <input type="radio" name="construtora" value="FG" @(Model.Construtora == "FG" ? "checked" : "") onchange="submeterFiltro()">
+                        <span class="checkmark radio-mark"></span>
                     </label>
                     <label class="check-container">
-                        Blumenau Construções
-                        <input type="checkbox" name="construtora" value="blumenau">
-                        <span class="checkmark"></span>
+                        MRV Engenharia
+                        <input type="radio" name="construtora" value="MRV" @(Model.Construtora == "MRV" ? "checked" : "") onchange="submeterFiltro()">
+                        <span class="checkmark radio-mark"></span>
+                    </label>
+                    <label class="check-container">
+                        RNI Incorporadora
+                        <input type="radio" name="construtora" value="RNI" @(Model.Construtora == "RNI" ? "checked" : "") onchange="submeterFiltro()">
+                        <span class="checkmark radio-mark"></span>
+                    </label>
+                    <label class="check-container">
+                        Flyer Negócios
+                        <input type="radio" name="construtora" value="Flyer" @(Model.Construtora == "Flyer" ? "checked" : "") onchange="submeterFiltro()">
+                        <span class="checkmark radio-mark"></span>
                     </label>
                 </div>
             }
 
             <div class="filter-block">
-                <h3>Quartos</h3>
+                <h3>Dormitórios</h3>
                 <div class="btn-group-filter">
-                    <button type="button" class="btn-round">1+</button>
-                    <button type="button" class="btn-round active">2+</button>
-                    <button type="button" class="btn-round">3+</button>
-                    <button type="button" class="btn-round">4+</button>
+                    <button type="button" class="btn-round @(Model.Quartos == null ? "active" : "")" onclick="alterarBotaoFiltro('Quartos', '')">Todos</button>
+                    <button type="button" class="btn-round @(Model.Quartos == 1 ? "active" : "")" onclick="alterarBotaoFiltro('Quartos', 1)">1+</button>
+                    <button type="button" class="btn-round @(Model.Quartos == 2 ? "active" : "")" onclick="alterarBotaoFiltro('Quartos', 2)">2+</button>
+                    <button type="button" class="btn-round @(Model.Quartos == 3 ? "active" : "")" onclick="alterarBotaoFiltro('Quartos', 3)">3+</button>
                 </div>
             </div>
 
             <div class="filter-block">
                 <h3>Banheiros</h3>
                 <div class="btn-group-filter">
-                    <button type="button" class="btn-round">1+</button>
-                    <button type="button" class="btn-round">2+</button>
-                    <button type="button" class="btn-round">3+</button>
-                    <button type="button" class="btn-round">4+</button>
+                    <button type="button" class="btn-round @(Model.Banheiros == null ? "active" : "")" onclick="alterarBotaoFiltro('Banheiros', '')">Todos</button>
+                    <button type="button" class="btn-round @(Model.Banheiros == 1 ? "active" : "")" onclick="alterarBotaoFiltro('Banheiros', 1)">1+</button>
+                    <button type="button" class="btn-round @(Model.Banheiros == 2 ? "active" : "")" onclick="alterarBotaoFiltro('Banheiros', 2)">2+</button>
+                </div>
+            </div>
+
+            <!-- NOVO FILTRO: VAGAS DE GARAGEM -->
+            <div class="filter-block">
+                <h3>Vagas de Garagem</h3>
+                <div class="btn-group-filter">
+                    <button type="button" class="btn-round @(Model.Garagem == null ? "active" : "")" onclick="alterarBotaoFiltro('Garagem', '')">Tanto faz</button>
+                    <button type="button" class="btn-round @(Model.Garagem == 1 ? "active" : "")" onclick="alterarBotaoFiltro('Garagem', 1)">1+</button>
+                    <button type="button" class="btn-round @(Model.Garagem == 2 ? "active" : "")" onclick="alterarBotaoFiltro('Garagem', 2)">2+</button>
+                    <button type="button" class="btn-round @(Model.Garagem == 3 ? "active" : "")" onclick="alterarBotaoFiltro('Garagem', 3)">3+</button>
                 </div>
             </div>
 
             <div class="filter-block">
-                <h3>Preço</h3>
+                <h3>Faixa de Valor</h3>
                 <div class="input-range-group">
                     <div class="input-box">
                         <span class="unit">R$</span>
-                        <input type="number" placeholder="Mínimo" name="precoMin">
+                        <input type="number" placeholder="Valor Mínimo" name="precoMin" value="@Model.PrecoMin">
                     </div>
                     <div class="input-box">
                         <span class="unit">R$</span>
-                        <input type="number" placeholder="Máximo" name="precoMax">
+                        <input type="number" placeholder="Valor Máximo" name="precoMax" value="@Model.PrecoMax">
                     </div>
                 </div>
             </div>
 
             <div class="sidebar-actions">
-                <button type="button" class="btn-clean-filter">Limpar</button>
-                <button type="submit" class="btn-apply-filter">Buscar imóveis</button>
+                <a href="/Listagem?operacao=@Model.Operacao" class="btn-clean-filter text-decoration-none" style="text-align:center; display:block; padding-top:10px;">Limpar Tudo</a>
+                <button type="submit" class="btn-apply-filter">Filtrar Resultados</button>
             </div>
         </form>
     </aside>
 
     <!-- ÁREA PRINCIPAL: RESULTADOS -->
     <main class="results-content">
-
         <div class="results-header">
             <div class="search-top-bar">
-                <input type="text" class="input-search-location" value="Blumenau - SC" placeholder="Digite a cidade ou bairro...">
-                <button class="btn-alert">🔔 Criar alerta</button>
-                <button class="btn-map">🗺️ Mapa</button>
-            </div>
+    <!-- Vinculamos o input ao datalist usando o atributo list="lista-sugestoes" -->
+    <input type="text" 
+           form="filterForm" 
+           name="localizacao" 
+           id="inputLocalizacao"
+           class="input-search-location" 
+           value="@Model.Localizacao" 
+           placeholder="Qual cidade ou bairro você busca?" 
+           autocomplete="off"
+           list="lista-sugestoes"
+           oninput="buscarSugestoes(this.value)">
+    
+    <!-- O datalist será preenchido dinamicamente pelo JavaScript -->
+    <datalist id="lista-sugestoes"></datalist>
 
-            <div class="quick-tags">
-                <span class="tag">Mobiliado</span>
-                <span class="tag">Aceita animais</span>
-                <span class="tag">Piscina</span>
-                <span class="tag">Varanda</span>
-            </div>
+    <button type="submit" form="filterForm" class="btn-map" style="background-color:#secondary; border:1px solid #ccc;">
+        🔍 Pesquisar
+    </button>
+</div>
 
             <div class="results-counter-row">
-                <!-- Título dinâmico contando a lista real mapeada do banco -->
-                @if (Model.Operacao == "construir")
-                {
-                    <h2><strong>@Model.Imoveis.Count</strong> Projetos e Terrenos para Construção em Blumenau - SC</h2>
-                }
-                else
-                {
-                    <h2><strong>@Model.Imoveis.Count</strong> Imóveis para venda em Santa Catarina - SC</h2>
-                }
-                <div class="sort-dropdown">
-                    <button class="btn-sort">⇅ Ordenar por</button>
+                <div>
+                    @if (Model.Operacao == "construir")
+                    {
+                        <h2><strong>@Model.Imoveis.Count</strong> Projetos e Empreendimentos em Lançamento</h2>
+                    }
+                    else
+                    {
+                        <h2><strong>@Model.Imoveis.Count</strong> Imóveis Prontos Encontrados no Brasil</h2>
+                    }
+                </div>
+                
+                <!-- SELECT DE ORDENAÇÃO SEGUINDO PARADIGMA DE FILTRAGEM -->
+                <div class="sort-dropdown-container">
+                    <select class="form-select select-sort-custom" onchange="ordenarResultados(this.value)">
+                        <option value="novos" selected="@(Model.OrdenarPor == "novos" || Model.OrdenarPor == null)">⇅ Mais Recentes</option>
+                        <option value="preco-asc" selected="@(Model.OrdenarPor == "preco-asc")">💰 Menor Preço</option>
+                        <option value="preco-desc" selected="@(Model.OrdenarPor == "preco-desc")">💰 Maior Preço</option>
+                    </select>
                 </div>
             </div>
         </div>
 
         <div class="cards-list-wrapper">
-
             @foreach (var imovel in Model.Imoveis)
             {
                 <div class="horizontal-property-card">
@@ -147,18 +182,26 @@
                     <div class="card-right-info">
                         <div class="card-info-header">
                             <span class="property-type-tag">
-                                @imovel.Tipo.ToString() com @imovel.TamanhoTerreno m²
+                                @imovel.Tipo.ToString() • @(imovel.Transacao == TipoTransacao.Construcao ? "Em Lançamento" : "Pronto para Morar")
                             </span>
-                            <button class="btn-favorite">❤️</button>
+                            @if (!string.IsNullOrEmpty(imovel.ConstrutoraResponsavel))
+                            {
+                                <span class="badge bg-dark text-white p-1 px-2" style="font-size:11px;">@imovel.ConstrutoraResponsavel</span>
+                            }
                         </div>
                         <h3 class="property-list-title">@imovel.Bairro, @imovel.CidadeEstado</h3>
-                        <p class="property-list-address">Código: @imovel.CodigoImovel</p>
+                        <p class="text-muted small style-paragrafo mb-1" style="font-size: 13px;">@imovel.Titulo</p>
+                        <p class="property-list-address">Código Ref: @imovel.CodigoImovel</p>
 
                         <div class="property-list-specs">
                             <span>📐 @imovel.TamanhoTerreno m²</span>
                             @if(imovel.QuantidadeQuartos > 0)
                             {
-                                <span>🛏️ @imovel.QuantidadeQuartos Quartos</span>
+                                <span>🛏️ @imovel.QuantidadeQuartos Qts</span>
+                            }
+                            @if(imovel.QuantidadeBanheiros > 0)
+                            {
+                                <span>🚿 @imovel.QuantidadeBanheiros Banheiros</span>
                             }
                             @if(imovel.QuantidadeVagasGaragem > 0)
                             {
@@ -169,10 +212,8 @@
                         <div class="card-info-footer">
                             <div class="price-box">
                                 <span class="main-price">R$ @imovel.Preco.ToString("N2")</span>
-                                <span class="sub-price">Status: @imovel.Status</span>
                             </div>
-                            <!-- O link agora chama exatamente a assinatura esperada pelo seu OnGetAsync(int id) -->
-                            <a href="/Detalhes?id=@imovel.Id" class="btn-contact-action" style="text-decoration:none; text-align:center; display: flex; align-items: center; justify-content: center;">Ver mais...</a>
+                            <a href="/Detalhes?id=@imovel.Id" class="btn-contact-action" style="text-decoration:none; text-align:center; display: flex; align-items: center; justify-content: center;">Ver Detalhes</a>
                         </div>
                     </div>
                 </div>
@@ -181,11 +222,70 @@
             @if (!Model.Imoveis.Any())
             {
                 <div class="text-center w-100 py-5 text-muted">
-                    <h3>Nenhum imóvel encontrado para esta categoria no momento.</h3>
-                    <p>Tente cadastrar novos imóveis no Painel Administrativo.</p>
+                    <h3>Nenhum imóvel corresponde aos termos pesquisados.</h3>
+                    <p>Você pode alterar os filtros ou pesquisar por outra localidade.</p>
                 </div>
             }
-
         </div>
     </main>
 </div>
+
+<!-- CAPTAÇÃO E ENVIO DE FILTROS VIA SCRIPT SEM CONFIGURAR PERDA DE ESTADO -->
+<script>
+    function submeterFiltro() {
+        document.getElementById('filterForm').submit();
+    }
+
+    function alterarBotaoFiltro(campo, valor) {
+        document.getElementById('input' + campo).value = valor;
+        submeterFiltro();
+    }
+
+    function ordenarResultados(ordem) {
+        document.getElementById('inputOrdenarPor').value = ordem;
+        submeterFiltro();
+    }
+
+    // NOVA FUNÇÃO: Faz a busca assíncrona no banco de dados enquanto o usuário digita
+    async function buscarSugestoes(valor) {
+        const datalist = document.getElementById('lista-sugestoes');
+        
+        // Só busca se o usuário digitou pelo menos 2 caracteres (ex: "Po")
+        if (valor.length < 2) {
+            datalist.innerHTML = '';
+            return;
+        }
+
+        try {
+            // Chama o método OnGetSugerirLocalizacaoAsync do C# passando o termo
+            const resposta = await fetch(`/Listagem?handler=SugerirLocalizacao&termo=${encodeURIComponent(valor)}`);
+            
+            if (resposta.ok) {
+                const dados = await resposta.json();
+                
+                // Limpa as sugestões antigas e adiciona as novas
+                datalist.innerHTML = '';
+                dados.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    datalist.appendChild(option);
+                });
+            }
+        } catch (erro) {
+            console.error("Erro ao buscar sugestões de localização:", erro);
+        }
+    }
+</script>
+
+<style>
+    .radio-mark { border-radius: 50% !important; }
+    .select-sort-custom {
+        padding: 6px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        color: #444;
+        background-color: #fff;
+        cursor: pointer;
+    }
+</style>
