@@ -30,11 +30,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // =================================================================
 
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate(); // Cria as tabelas automaticamente se não existirem
-}
+
 // Configura o pipeline de requisições HTTP.
 if (!app.Environment.IsDevelopment())
 {
