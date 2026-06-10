@@ -9,10 +9,10 @@
     <div class="card shadow border-0 p-4">
         <h2 class="fw-bold mb-4 text-secondary">Editar Imóvel: <span class="text-danger">@Model.Imovel.CodigoImovel</span></h2>
 
-        <form method="post">
-            <input type="hidden" asp-for="Imovel.Id" />
-
-            <div class="row g-3">
+        <form method="post" id="formEditarImovel">
+            <input type="hidden" asp-for="Imovel.Id" id="imovelId" />
+            <input type="hidden" asp-for="Imovel.CodigoImovel" />
+            @Html.AntiForgeryToken() <div class="row g-3">
                 <div class="col-md-12">
                     <label class="form-label fw-bold">Título do Anúncio</label>
                     <input asp-for="Imovel.Titulo" class="form-control" />
@@ -85,6 +85,38 @@
                 </div>
 
                 <div class="col-md-12 bg-light p-3 border rounded">
+                    <label class="form-label fw-bold text-secondary mb-3">Galeria de Fotos Atual (Clique para ampliar)</label>
+                    
+                    @if (Model.Imovel.ImagensSecundarias != null && Model.Imovel.ImagensSecundarias.Any())
+                    {
+                        <div class="row g-2 mb-3">
+                            @foreach (var foto in Model.Imovel.ImagensSecundarias)
+                            {
+                                <div class="col-6 col-md-3 position-relative card-foto" id="container-foto-@foto.Id">
+                                    <img src="@foto.UrlImagem" 
+                                         class="img-thumbnail d-block w-100 btn-zoom" 
+                                         style="height: 110px; object-fit: cover; cursor: pointer;" 
+                                         alt="Foto do imóvel"
+                                         onclick="abrirZoom('@foto.UrlImagem')">
+                                    
+                                    <button type="button" 
+                                            class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 shadow-sm rounded-circle d-flex align-items-center justify-content-center" 
+                                            style="width: 26px; height: 26px; padding: 0; font-size: 12px; font-weight: bold; border: 2px solid white;"
+                                            title="Excluir Imagem"
+                                            onclick="deletarImagemBanco(@foto.Id)">
+                                        ✕
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted small mb-3 text-gallery-vazia">Nenhuma imagem secundária cadastrada para este imóvel.</p>
+                    }
+
+                    <hr class="text-muted" />
+
                     <label class="form-label fw-bold text-danger">Adicionar Mais Fotos na Galeria (Múltiplas)</label>
                     <p class="text-muted style-paragrafo" style="font-size:12px; margin-top:-5px;">Cole as URLs geradas pelo Supabase separando-as por vírgula ou uma por linha:</p>
                     <textarea name="NovasImagensLinks" class="form-control" rows="3" placeholder="https://url1.supabase.co/...,&#10;https://url2.supabase.co/..."></textarea>
@@ -112,3 +144,69 @@
         </form>
     </div>
 </div>
+
+<div class="modal fade" id="modalZoomFoto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-body p-0 position-relative text-center">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 shadow" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1060; background-color: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%;"></button>
+                <img src="" id="imgModalZoom" class="img-fluid rounded shadow-lg" style="max-height: 85vh; object-fit: contain;" alt="Imagem Ampliada">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-foto img:hover {
+        opacity: 0.85;
+        transition: 0.2s ease-in-out;
+    }
+</style>
+
+<script>
+    // 1. Função para abrir o Modal com a foto grande
+    function abrirZoom(url) {
+        document.getElementById('imgModalZoom').src = url;
+        var meuModal = new bootstrap.Modal(document.getElementById('modalZoomFoto'));
+        meuModal.show();
+    }
+
+    // 2. Função assíncrona para deletar a imagem usando Fetch API (Ajax)
+    async function deletarImagemBanco(imagemId) {
+        if (!confirm("Tem certeza que deseja remover permanentemente esta imagem da galeria?")) {
+            return;
+        }
+
+        // Recupera o token de segurança do formulário para evitar bloqueio do servidor
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        try {
+            const resposta = await fetch(`/Admin/Imoveis/Editar?handler=DeletarImagem&imagemId=${imagemId}`, {
+                method: "POST",
+                headers: {
+                    "RequestVerificationToken": token
+                }
+            });
+
+            if (resposta.ok) {
+                const resultado = await resposta.json();
+                if (resultado.sucesso) {
+                    // Remove o bloco da imagem da tela instantaneamente com um efeito suave
+                    const elemento = document.getElementById(`container-foto-${imagemId}`);
+                    elemento.style.transition = "all 0.3s ease";
+                    elemento.style.opacity = "0";
+                    setTimeout(() => {
+                        elemento.remove();
+                    }, 300);
+                } else {
+                    alert("Erro ao excluir: " + resultado.mensagem);
+                }
+            } else {
+                alert("Erro de comunicação com o servidor.");
+            }
+        } catch (erro) {
+            console.error(erro);
+            alert("Ocorreu uma falha ao tentar remover a imagem.");
+        }
+    }
+</script>
