@@ -1,6 +1,7 @@
 **/.classpath
 **/.dockerignore
 **/.env
+**/.env.*
 **/.git
 **/.gitignore
 **/.project
@@ -20,11 +21,9 @@
 **/npm-debug.log
 **/obj
 **/secrets.dev.yaml
+**/secrets.json
+**/appsettings.Development.json
 **/values.dev.yaml
+
 LICENSE
 README.md
-!**/.gitignore
-!.git/HEAD
-!.git/config
-!.git/packed-refs
-!.git/refs/heads/**

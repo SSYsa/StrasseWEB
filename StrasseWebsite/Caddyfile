@@ -1,0 +1,3 @@
+strasseimoveis.com.br {
+    reverse_proxy strassewebsite:8080
+}

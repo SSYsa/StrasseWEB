@@ -4,50 +4,119 @@ using StrasseWebsite.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// BUSCA E VALIDA A LINHA DE CONEXÃO
+// ============================================================
+// CONNECTION STRING
+// A connection string deve vir da configuração/Secret,
+// nunca ficar gravada diretamente neste arquivo.
+// ============================================================
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
+
+if (string.IsNullOrWhiteSpace(connectionString))
 {
-    throw new InvalidOperationException("ERRO: A chave 'DefaultConnection' não foi encontrada dentro 'ConnectionStrings' no seu appsettings.json!");
+    throw new InvalidOperationException(
+        "A connection string 'DefaultConnection' não foi encontrada."
+    );
 }
 
-// Registrar o ApplicationDbContext configurado para o PostgreSQL do Supabase
-builder.Services.AddDbContext<StrasseWebsite.Data.ApplicationDbContext>(options =>
+// ============================================================
+// BANCO DE DADOS
+// PostgreSQL / Supabase
+// ============================================================
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Add services to the container.
-// Modifique para incluir a convenção de autorização na pasta Admin
+// ============================================================
+// RAZOR PAGES
+// ============================================================
+
 builder.Services.AddRazorPages(options =>
 {
+    // Toda a pasta /Admin exige autenticação
     options.Conventions.AuthorizeFolder("/Admin");
-}); 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
-    options.LoginPath = "/Account/Login";
 });
 
-// =================================================================
-// 🚀 A PARTIR DAQUI ESTAVA FALTANDO NO SEU PROJETO:
-// =================================================================
+// ============================================================
+// AUTENTICAÇÃO
+// ============================================================
+
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+
+        // O cookie será utilizado somente via HTTPS
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+        // Proteção contra envio do cookie em requisições cross-site
+        options.Cookie.SameSite = SameSiteMode.Lax;
+
+        // Tempo de validade da sessão
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+
+        // Renova a sessão enquanto o usuário permanecer ativo
+        options.SlidingExpiration = true;
+    });
+
+// ============================================================
+// AUTORIZAÇÃO
+// ============================================================
+
+builder.Services.AddAuthorization();
+
+// ============================================================
+// CONSTRÓI A APLICAÇÃO
+// ============================================================
 
 var app = builder.Build();
 
-// Configura o pipeline de requisições HTTP.
+// ============================================================
+// PIPELINE DE PRODUÇÃO
+// ============================================================
+
 if (!app.Environment.IsDevelopment())
 {
-    //app.UseExceptionHandler("/Error");
-    // O HSTS só roda em produção
+    app.UseExceptionHandler("/Error");
+
+    // HSTS informa ao navegador que o site deve ser acessado
+    // exclusivamente através de HTTPS.
     app.UseHsts();
 
-    // ATIVA O HTTPS APENAS EM PRODUÇÃO (No Render)
-    // Isso protege o seu login sem quebrar o seu localhost de desenvolvimento!
+    // Redireciona HTTP para HTTPS.
     app.UseHttpsRedirection();
 }
 
-app.UseStaticFiles(); // Permite carregar o CSS, imagens e o site.js
+// ============================================================
+// ARQUIVOS ESTÁTICOS
+// ============================================================
+
+app.UseStaticFiles();
+
+// ============================================================
+// ROTEAMENTO
+// ============================================================
+
 app.UseRouting();
-app.UseAuthentication(); // Habilita o sistema de autenticação (cookies)
+
+// ============================================================
+// AUTENTICAÇÃO E AUTORIZAÇÃO
+// ============================================================
+
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages(); // DIZ AO .NET PARA MAPEAR A PASTA PAGES (Index, SobreNos, etc)
+// ============================================================
+// RAZOR PAGES
+// ============================================================
 
-app.Run(); // LIGA O SERVIDOR DE VERDADE!
+app.MapRazorPages();
+
+// ============================================================
+// INICIA A APLICAÇÃO
+// ============================================================
+
+app.Run();

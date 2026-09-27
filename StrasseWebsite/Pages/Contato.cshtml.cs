@@ -3,6 +3,7 @@ using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MimeKit;
+using MimeKit.Utils;
 
 namespace StrasseWebsite.Pages
 {
@@ -36,16 +37,23 @@ namespace StrasseWebsite.Pages
             // Descobre se é carreira ou parceria através da URL
             string tipo = Request.Query["tipo"].ToString().ToLower();
 
+            if (tipo != "carreira" && tipo != "parceria")
+            {
+                tipo = "parceria";
+            }
+
             try
             {
-                // ==========================================
-                // CONFIGURAÇÕES
-                // ==========================================
+                // =====================================================
+                // CONFIGURAÇÕES SMTP
+                // As credenciais NÃO ficam neste arquivo.
+                // =====================================================
 
-                var smtpServer = _configuration["EmailSettings:SmtpServer"];
-                var smtpPort = int.Parse(
-                    _configuration["EmailSettings:SmtpPort"] ?? "587"
-                );
+                var smtpServer =
+                    _configuration["EmailSettings:SmtpServer"];
+
+                var smtpPortValue =
+                    _configuration["EmailSettings:SmtpPort"];
 
                 var senderEmail =
                     _configuration["EmailSettings:SenderEmail"];
@@ -60,9 +68,15 @@ namespace StrasseWebsite.Pages
                     _configuration["EmailSettings:Password"];
 
 
-                // ==========================================
-                // VALIDAÇÃO BÁSICA
-                // ==========================================
+                if (!int.TryParse(smtpPortValue, out int smtpPort))
+                {
+                    smtpPort = 587;
+                }
+
+
+                // =====================================================
+                // VALIDAÇÃO
+                // =====================================================
 
                 if (string.IsNullOrWhiteSpace(email))
                 {
@@ -74,9 +88,30 @@ namespace StrasseWebsite.Pages
                     return Page();
                 }
 
+                if (!string.IsNullOrWhiteSpace(email))
+                {
+                    try
+                    {
+                        _ = new MailboxAddress(
+                            "",
+                            email
+                        );
+                    }
+                    catch
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            "Informe um endereço de e-mail válido."
+                        );
+
+                        return Page();
+                    }
+                }
+
                 if (string.IsNullOrWhiteSpace(smtpServer) ||
                     string.IsNullOrWhiteSpace(username) ||
-                    string.IsNullOrWhiteSpace(password))
+                    string.IsNullOrWhiteSpace(password) ||
+                    string.IsNullOrWhiteSpace(senderEmail))
                 {
                     _logger.LogError(
                         "Configuração SMTP incompleta."
@@ -91,57 +126,73 @@ namespace StrasseWebsite.Pages
                 }
 
 
-                // ==========================================
+                // =====================================================
                 // CRIA A MENSAGEM
-                // ==========================================
+                // =====================================================
 
                 var message = new MimeMessage();
 
                 message.From.Add(
                     new MailboxAddress(
-                        senderName,
+                        senderName ?? "Strasse Imóveis",
                         senderEmail
                     )
                 );
 
-                // DESTINATÁRIOS
+                // DESTINATÁRIO PRINCIPAL
                 message.To.Add(
                     MailboxAddress.Parse(
                         "strasse.imoveis@gmail.com"
                     )
                 );
 
+                // CÓPIA
                 message.Cc.Add(
                     MailboxAddress.Parse(
                         "in.ysabelle@gmail.com"
                     )
                 );
 
+                // Ao clicar em "Responder", a resposta vai para
+                // a pessoa que preencheu o formulário.
                 message.ReplyTo.Add(
                     MailboxAddress.Parse(email)
                 );
 
-                // ==========================================
+
+                // =====================================================
                 // FORMULÁRIO DE CARREIRA
-                // ==========================================
+                // =====================================================
 
                 if (tipo == "carreira")
                 {
                     message.Subject =
-                        $"Novo Currículo - {nome}";
+                        $"Novo Currículo - {nome ?? "Candidato"}";
 
                     var body = new BodyBuilder();
 
                     body.HtmlBody = $@"
                         <h2>Novo currículo recebido</h2>
 
-                        <p><strong>Nome:</strong> {nome}</p>
+                        <p>
+                            <strong>Nome:</strong>
+                            {System.Net.WebUtility.HtmlEncode(nome)}
+                        </p>
 
-                        <p><strong>Telefone:</strong> {telefone}</p>
+                        <p>
+                            <strong>Telefone:</strong>
+                            {System.Net.WebUtility.HtmlEncode(telefone)}
+                        </p>
 
-                        <p><strong>E-mail:</strong> {email}</p>
+                        <p>
+                            <strong>E-mail:</strong>
+                            {System.Net.WebUtility.HtmlEncode(email)}
+                        </p>
 
-                        <p><strong>Pretensão salarial:</strong> {pretensao}</p>
+                        <p>
+                            <strong>Pretensão salarial:</strong>
+                            {System.Net.WebUtility.HtmlEncode(pretensao)}
+                        </p>
 
                         <hr>
 
@@ -151,24 +202,41 @@ namespace StrasseWebsite.Pages
                         </p>
                     ";
 
-                    // ==========================================
-                    // ANEXA O CURRÍCULO
-                    // ==========================================
+
+                    // =================================================
+                    // ANEXO DO CURRÍCULO
+                    // =================================================
 
                     if (curriculo != null && curriculo.Length > 0)
                     {
+                        // Limite de segurança: 10 MB
+                        const long tamanhoMaximo = 10 * 1024 * 1024;
+
+                        if (curriculo.Length > tamanhoMaximo)
+                        {
+                            ModelState.AddModelError(
+                                "",
+                                "O currículo não pode ter mais de 10 MB."
+                            );
+
+                            return Page();
+                        }
+
                         using var memoryStream = new MemoryStream();
 
                         await curriculo.CopyToAsync(memoryStream);
 
                         memoryStream.Position = 0;
 
+                        var contentType =
+                            string.IsNullOrWhiteSpace(curriculo.ContentType)
+                                ? "application/octet-stream"
+                                : curriculo.ContentType;
+
                         body.Attachments.Add(
                             curriculo.FileName,
                             memoryStream.ToArray(),
-                            ContentType.Parse(
-                                curriculo.ContentType
-                            )
+                            ContentType.Parse(contentType)
                         );
                     }
 
@@ -176,14 +244,14 @@ namespace StrasseWebsite.Pages
                 }
 
 
-                // ==========================================
+                // =====================================================
                 // FORMULÁRIO DE PARCERIA
-                // ==========================================
+                // =====================================================
 
                 else
                 {
                     message.Subject =
-                        $"Nova Solicitação de Parceria - {nomeParceiro}";
+                        $"Nova Solicitação de Parceria - {nomeParceiro ?? "Contato"}";
 
                     var body = new BodyBuilder();
 
@@ -192,22 +260,22 @@ namespace StrasseWebsite.Pages
 
                         <p>
                             <strong>Nome / Razão Social:</strong>
-                            {nomeParceiro}
+                            {System.Net.WebUtility.HtmlEncode(nomeParceiro)}
                         </p>
 
                         <p>
                             <strong>Telefone:</strong>
-                            {telefone}
+                            {System.Net.WebUtility.HtmlEncode(telefone)}
                         </p>
 
                         <p>
                             <strong>E-mail:</strong>
-                            {email}
+                            {System.Net.WebUtility.HtmlEncode(email)}
                         </p>
 
                         <p>
                             <strong>Tipo de atuação:</strong>
-                            {atuacao}
+                            {System.Net.WebUtility.HtmlEncode(atuacao)}
                         </p>
 
                         <hr>
@@ -215,7 +283,7 @@ namespace StrasseWebsite.Pages
                         <h3>Mensagem / Proposta</h3>
 
                         <p>
-                            {mensagem}
+                            {System.Net.WebUtility.HtmlEncode(mensagem)}
                         </p>
 
                         <hr>
@@ -230,9 +298,9 @@ namespace StrasseWebsite.Pages
                 }
 
 
-                // ==========================================
+                // =====================================================
                 // ENVIO SMTP
-                // ==========================================
+                // =====================================================
 
                 using var smtp = new SmtpClient();
 
@@ -252,9 +320,9 @@ namespace StrasseWebsite.Pages
                 await smtp.DisconnectAsync(true);
 
 
-                // ==========================================
-                // LOG DE SUCESSO
-                // ==========================================
+                // =====================================================
+                // LOG
+                // =====================================================
 
                 _logger.LogInformation(
                     "E-mail enviado com sucesso. Tipo: {Tipo}, Remetente: {Email}",
@@ -263,9 +331,9 @@ namespace StrasseWebsite.Pages
                 );
 
 
-                // ==========================================
+                // =====================================================
                 // RETORNO
-                // ==========================================
+                // =====================================================
 
                 TempData["MensagemSucesso"] =
                     tipo == "carreira"
@@ -279,8 +347,9 @@ namespace StrasseWebsite.Pages
             }
             catch (Exception ex)
             {
-                // IMPORTANTE:
-                // registra o erro real no log
+                // O erro técnico fica somente no log do servidor.
+                // Não mostramos detalhes ao visitante.
+
                 _logger.LogError(
                     ex,
                     "Erro ao enviar e-mail através do formulário de contato."
