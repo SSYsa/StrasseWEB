@@ -172,15 +172,194 @@ main, .main-content, .container-principal {
     }
 
 /* ==========================================
-   3. BLOCO 2: HERO BANNER (SEÇÃO VERMELHA)
+   3. BLOCO 2: HERO BANNER
+   FOTO DA CIDADE + VERMELHO TRANSPARENTE
    ========================================== */
+
 .hero-banner {
-    background-color: #C00000;
-    padding: 140px 20px 80px 20px; /* Aumentado padding-top para compensar o menu flutuante */
+    position: relative;
+    /* FOTO DE FUNDO */
+    background-image: url('/images/icon/vistapomerodeaerea.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 140px 20px 80px 20px;
     text-align: center;
     color: #ffffff;
     width: 100%;
+    /* Impede a imagem de vazar */
+    overflow: hidden;
 }
+
+
+    /* ==========================================
+   CAMADA VERMELHA SOBRE A FOTOGRAFIA
+   ========================================== */
+
+    .hero-banner::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        /*
+       Gradiente vermelho transparente.
+       Mais transparente em cima,
+       mais vermelho embaixo.
+    */
+        background: linear-gradient( to bottom, rgba(192, 0, 0, 0.35) 0%, rgba(192, 0, 0, 0.48) 45%, rgba(192, 0, 0, 0.72) 100% );
+        z-index: 1;
+    }
+
+
+/* ==========================================
+   CONTEÚDO FICA ACIMA DA IMAGEM E DO VERMELHO
+   ========================================== */
+
+.hero-container {
+    position: relative;
+    z-index: 2;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+
+/* ==========================================
+   NOME STRASSE IMÓVEIS
+   ========================================== */
+
+.hero-brand {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    font-family: 'Georgia', serif;
+}
+
+    .hero-brand span {
+        font-weight: 300;
+    }
+
+
+/* ==========================================
+   CAIXA DO SLOGAN
+   ========================================== */
+
+.hero-slogan-box {
+    margin-bottom: 40px;
+}
+
+    .hero-slogan-box h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .hero-slogan-box p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+
+/* ==========================================
+   BARRA DE PESQUISA
+   ========================================== */
+
+.search-bar-container {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /*
+       Pequeno desfoque no fundo da caixa.
+       Deixa mais parecido com o segundo exemplo.
+    */
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+
+/* ==========================================
+   CAMPOS
+   ========================================== */
+
+.search-field {
+    flex: 1;
+    min-width: 220px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+    /* Labels */
+
+    .search-field label {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+
+    /* Selects */
+
+    .search-field select {
+        width: 100%;
+        padding: 12px 15px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #333;
+        background-color: #ffffff;
+        outline: none;
+        cursor: pointer;
+        height: 48px;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+    }
+
+        .search-field select:focus {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+        }
+
+
+/* ==========================================
+   BOTÃO BUSCAR
+   ========================================== */
+
+.search-action {
+    min-width: 140px;
+}
+
+.btn-search {
+    width: 100%;
+    height: 48px;
+    background-color: #E0E0E0;
+    color: #333;
+    border: none;
+    padding: 0 20px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+    .btn-search:hover {
+        background-color: #CCCCCC;
+    }
 
 .hero-container {
     max-width: 1000px;

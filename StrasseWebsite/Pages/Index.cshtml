@@ -5,19 +5,31 @@
 }
 
 <section class="hero-banner">
+
+    <!-- Camada vermelha sobre a imagem -->
+    <div class="hero-overlay"></div>
+
     <div class="hero-container">
-        <h1 class="hero-brand">STRASSE <span>IMÓVEIS</span></h1>
+
+        <h1 class="hero-brand">
+            STRASSE <span>IMÓVEIS</span>
+        </h1>
 
         <div class="hero-slogan-box">
-            <h2>O melhor caminho para o seu imóvel!</h2>
-            <p>Seu Parceiro de Confiança para Comprar, Vender ou Construir Imóveis no Brasil.</p>
+            <h2>Construindo conexões, encontrando lares!</h2>
+            <p>
+                Seu Parceiro de Confiança para Comprar, Vender ou Construir Imóveis no Brasil.
+            </p>
         </div>
 
-        <!-- FORMULÁRIO ADICIONADO: Redireciona via GET direto para a nossa página de listagem -->
-        <form method="get" action="/Listagem" class="search-bar-container">
+        <!-- FORMULÁRIO -->
+        <form method="get"
+              action="/Listagem"
+              class="search-bar-container">
 
             <div class="search-field">
                 <label for="operacao">O que deseja fazer?</label>
+
                 <select id="operacao" name="operacao">
                     <option value="">Selecione a opção... (Listar tudo)</option>
                     <option value="comprar">Comprar Imóvel Pronto</option>
@@ -27,6 +39,7 @@
 
             <div class="search-field">
                 <label for="tipoImovel">Tipo de Imóvel</label>
+
                 <select id="tipoImovel" name="tipo">
                     <option value="">Todos os tipos...</option>
                     <option value="apartamento">Apartamento</option>
@@ -37,6 +50,7 @@
 
             <div class="search-field">
                 <label for="localizacao">Onde procura?</label>
+
                 <select id="localizacao" name="localizacao">
                     <option value="">Qualquer Bairro / Cidade...</option>
                     <option value="Blumenau">Blumenau - SC</option>
@@ -45,10 +59,13 @@
             </div>
 
             <div class="search-action">
-                <button type="submit" class="btn-search">Buscar</button>
+                <button type="submit" class="btn-search">
+                    Buscar
+                </button>
             </div>
 
         </form>
+
     </div>
 </section>
 <section class="properties-section">
@@ -109,7 +126,7 @@
         <div class="about-content-wrapper">
 
             <div class="about-image-box">
-                <img src="/images/about-strasse.jpg" alt="Conheça a Strasse" onerror="this.src='https://placehold.co/600x450?text=Strasse+Imobili%C3%A1ria+%2B+Construtora'" />
+                <img src="/images/about-strasse.jpg" alt="Conheça a Strasse" onerror="this.src='/images/icon/portalpomerode.jpeg'" />
             </div>
 
             <div class="about-text-box">
@@ -137,7 +154,7 @@
                 </ul>
 
                 <!-- LINKADO: Botão do WhatsApp do Especialista conforme solicitado -->
-                <a href="https://wa.me/5547984917838" target="_blank" class="btn-about-action">Fale com um Especialista</a>
+                <a href="https://wa.me/554733950009" target="_blank" class="btn-about-action">Fale com um Especialista</a>
             </div>
 
         </div>
