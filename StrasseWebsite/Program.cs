@@ -18,6 +18,7 @@ if (string.IsNullOrWhiteSpace(connectionString))
         "A connection string 'DefaultConnection' não foi encontrada."
     );
 }
+Console.WriteLine("Connection String carregada.");
 
 // ============================================================
 // BANCO DE DADOS
