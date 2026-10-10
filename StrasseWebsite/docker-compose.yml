@@ -13,60 +13,11 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
 
-      # ==========================================================
-      # CONFIGURAÇÕES DE E-MAIL
-      # Os valores reais serão fornecidos pelo arquivo .env
-      # no servidor.
-      # ==========================================================
-
-      EmailSettings__SmtpServer: ${SMTP_SERVER}
-      EmailSettings__SmtpPort: ${SMTP_PORT}
-      EmailSettings__SenderEmail: ${SENDER_EMAIL}
-      EmailSettings__SenderName: ${SENDER_NAME}
-      EmailSettings__Username: ${SMTP_USERNAME}
-      EmailSettings__Password: ${SMTP_PASSWORD}
-
-      # ==========================================================
-      # BANCO DE DADOS
-      # ==========================================================
-
+      # Banco de dados
       ConnectionStrings__DefaultConnection: ${DEFAULT_CONNECTION}
 
-    expose:
-      - "8080"
+      # Supabase
+      Supabase__Url: ${SUPABASE_URL}
+      Supabase__ApiKey: ${SUPABASE_API_KEY}
 
-    networks:
-      - strasse-network
-
-
-  caddy:
-    image: caddy:2
-
-    container_name: strasse-caddy
-
-    restart: unless-stopped
-
-    ports:
-      - "80:80"
-      - "443:443"
-
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-
-    depends_on:
-      - strassewebsite
-
-    networks:
-      - strasse-network
-
-
-networks:
-  strasse-network:
-    driver: bridge
-
-
-volumes:
-  caddy_data:
-  caddy_config:
+      # E-mail
