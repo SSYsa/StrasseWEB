@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StrasseWebsite.Data;
 using StrasseWebsite.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace StrasseWebsite.Pages.Admin.Imoveis
 {
@@ -19,150 +22,363 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
         [BindProperty]
         public Imovel Imovel { get; set; } = default!;
 
-        // Propriedade para receber novos links da galeria digitados no input de texto
         [BindProperty]
         public string? NovasImagensLinks { get; set; }
-        
+
         [BindProperty]
         public string? NovoProprietario { get; set; }
+
         public SelectList ProprietariosList { get; set; } = default!;
+
         public SelectList CorretoresList { get; set; } = default!;
+
+
+        // ==========================================================
+        // GET
+        // ==========================================================
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            var imovelBanco = await _context.Imoveis
-                .Include(i => i.ImagensSecundarias)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (imovelBanco == null) return NotFound();
-
-            Imovel = imovelBanco;
-
-            var pessoas = await _context.Pessoas.ToListAsync();
-            ProprietariosList = new SelectList(pessoas, "Id", "Nome");
-            CorretoresList = new SelectList(pessoas, "Id", "Nome");
-
-            return Page();
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            // 1. Remove validações que o formulário não preenche
-            ModelState.Remove("Imovel.Proprietario");
-            ModelState.Remove("Imovel.Corretor");
-            ModelState.Remove("Imovel.CodigoImovel");
-            ModelState.Remove("Imovel.ImagensSecundarias");
-
-            if (!ModelState.IsValid)
-            {
-                var pessoas = await _context.Pessoas.ToListAsync();
-                ProprietariosList = new SelectList(pessoas, "Id", "Nome");
-                CorretoresList = new SelectList(pessoas, "Id", "Nome");
-                return Page();
-            }
-
-            // 2. Busca o imóvel do banco TRAZENDO as imagens secundárias atuais (.Include)
-            var imovelBanco = await _context.Imoveis
-                .Include(i => i.ImagensSecundarias)
-                .FirstOrDefaultAsync(i => i.Id == Imovel.Id);
+            var imovelBanco =
+                await _context.Imoveis
+                    .Include(i => i.ImagensSecundarias)
+                    .FirstOrDefaultAsync(
+                        m => m.Id == id);
 
             if (imovelBanco == null)
             {
                 return NotFound();
             }
 
-            // 3. Atualiza os dados base do imóvel
-            imovelBanco.Titulo = Imovel.Titulo;
-            imovelBanco.Descricao = Imovel.Descricao;
-            imovelBanco.Preco = Imovel.Preco;
-            imovelBanco.CidadeEstado = Imovel.CidadeEstado;
-            imovelBanco.Bairro = Imovel.Bairro;
-            imovelBanco.Endereco = Imovel.Endereco;
-            imovelBanco.QuantidadeQuartos = Imovel.QuantidadeQuartos;
-            imovelBanco.QuantidadeBanheiros = Imovel.QuantidadeBanheiros;
-            imovelBanco.QuantidadeVagasGaragem = Imovel.QuantidadeVagasGaragem;
+            Imovel = imovelBanco;
+
+            await CarregarListasAsync();
+
+            return Page();
+        }
+
+
+        // ==========================================================
+        // POST
+        // ==========================================================
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            ModelState.Remove("Imovel.Proprietario");
+            ModelState.Remove("Imovel.Corretor");
+            ModelState.Remove("Imovel.CodigoImovel");
+            ModelState.Remove("Imovel.ImagensSecundarias");
+
+
+            if (!ModelState.IsValid)
+            {
+                await CarregarListasAsync();
+
+                return Page();
+            }
+
+
+            // ======================================================
+            // BUSCA O IMÓVEL ORIGINAL
+            // ======================================================
+
+            var imovelBanco =
+                await _context.Imoveis
+                    .Include(i => i.ImagensSecundarias)
+                    .FirstOrDefaultAsync(
+                        i => i.Id == Imovel.Id);
+
+
+            if (imovelBanco == null)
+            {
+                return NotFound();
+            }
+
+
+            // ======================================================
+            // DADOS BÁSICOS
+            // ======================================================
+
+            imovelBanco.Titulo =
+                Imovel.Titulo;
+
+            imovelBanco.Descricao =
+                Imovel.Descricao;
+
+            imovelBanco.Preco =
+                Imovel.Preco;
+
+            imovelBanco.CidadeEstado =
+                Imovel.CidadeEstado;
+
+            imovelBanco.Bairro =
+                Imovel.Bairro;
+
+            imovelBanco.Endereco =
+                Imovel.Endereco;
+
+
+            // ======================================================
+            // ESTRUTURA
+            // ======================================================
+
+            imovelBanco.QuantidadeQuartos =
+                Imovel.QuantidadeQuartos;
+
+            imovelBanco.QuantidadeBanheiros =
+                Imovel.QuantidadeBanheiros;
+
+            imovelBanco.QuantidadeVagasGaragem =
+                Imovel.QuantidadeVagasGaragem;
+
+
+            // ======================================================
+            // PROPRIETÁRIO
+            // ======================================================
+
             if (!string.IsNullOrWhiteSpace(NovoProprietario))
             {
-                var novoProprietario = new Pessoa
-                {
-                    Nome = NovoProprietario.Trim(),
-                    Tipo = TipoPessoa.Fisica,
-                    Documento = "PENDENTE",
-                    DataNascimento = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    Telefone = "PENDENTE",
-                    Email = "strasse.imoveis@gmail.com",
-                    Perfil = TipoPerfil.Cliente,
-                    Ativo = true,
-                    DataCadastro = DateTime.UtcNow
-                };
+                var novoProprietario =
+                    new Pessoa
+                    {
+                        Nome =
+                            NovoProprietario.Trim(),
 
-                _context.Pessoas.Add(novoProprietario);
+                        Tipo =
+                            TipoPessoa.Fisica,
 
-                imovelBanco.Proprietario = novoProprietario;
+                        Documento =
+                            "PENDENTE",
+
+                        DataNascimento =
+                            new DateTime(
+                                1900,
+                                1,
+                                1,
+                                0,
+                                0,
+                                0,
+                                DateTimeKind.Utc),
+
+                        Telefone =
+                            "PENDENTE",
+
+                        Email =
+                            "strasse.imoveis@gmail.com",
+
+                        Perfil =
+                            TipoPerfil.Cliente,
+
+                        Ativo =
+                            true,
+
+                        DataCadastro =
+                            DateTime.UtcNow
+                    };
+
+
+                _context.Pessoas.Add(
+                    novoProprietario);
+
+                imovelBanco.Proprietario =
+                    novoProprietario;
             }
             else
             {
-                imovelBanco.ProprietarioId = Imovel.ProprietarioId;
+                imovelBanco.ProprietarioId =
+                    Imovel.ProprietarioId;
             }
-            imovelBanco.CorretorId = Imovel.CorretorId;
-            imovelBanco.Tipo = Imovel.Tipo;
-            imovelBanco.Transacao = Imovel.Transacao;
-            imovelBanco.UrlImagemPrincipal = Imovel.UrlImagemPrincipal;
-            imovelBanco.Status = Imovel.Status;
-            imovelBanco.ConstrutoraResponsavel = Imovel.ConstrutoraResponsavel;
 
-            // 4. Processa e adiciona os novos links na lista vinculada ao imóvel
-            if (!string.IsNullOrEmpty(NovasImagensLinks))
+
+            // ======================================================
+            // CORRETOR
+            // ======================================================
+
+            imovelBanco.CorretorId =
+                Imovel.CorretorId;
+
+
+            // ======================================================
+            // TIPO DO IMÓVEL
+            // ======================================================
+
+            imovelBanco.Tipo =
+                Imovel.Tipo;
+
+
+            // ======================================================
+            // TRANSAÇÃO
+            //
+            // Aqui entra:
+            // Compra
+            // Construcao
+            // Aluguel
+            // ======================================================
+
+            imovelBanco.Transacao =
+                Imovel.Transacao;
+
+
+            // ======================================================
+            // IMAGEM
+            // ======================================================
+
+            imovelBanco.UrlImagemPrincipal =
+                Imovel.UrlImagemPrincipal;
+
+
+            // ======================================================
+            // STATUS
+            // ======================================================
+
+            imovelBanco.Status =
+                Imovel.Status;
+
+
+            // ======================================================
+            // CONSTRUTORA
+            // ======================================================
+
+            imovelBanco.ConstrutoraResponsavel =
+                Imovel.ConstrutoraResponsavel;
+
+
+            // ======================================================
+            // NOVAS IMAGENS
+            // ======================================================
+
+            if (!string.IsNullOrWhiteSpace(
+                NovasImagensLinks))
             {
-                // Quebra o texto por vírgula ou quebra de linha
-                var links = NovasImagensLinks.Split(new[] { ',', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                var links =
+                    NovasImagensLinks.Split(
+                        new[]
+                        {
+                            ',',
+                            '\n',
+                            '\r'
+                        },
+                        StringSplitOptions.RemoveEmptyEntries);
+
 
                 foreach (var link in links)
                 {
-                    var urlLimpa = link.Trim();
-                    if (!string.IsNullOrEmpty(urlLimpa))
+                    var urlLimpa =
+                        link.Trim();
+
+
+                    if (!string.IsNullOrWhiteSpace(
+                        urlLimpa))
                     {
-                        // Adiciona direto na lista do imóvel rastreado pelo EF Core
-                        imovelBanco.ImagensSecundarias.Add(new ImagemImovel
-                        {
-                            UrlImagem = urlLimpa
-                        });
+                        imovelBanco
+                            .ImagensSecundarias
+                            .Add(
+                                new ImagemImovel
+                                {
+                                    UrlImagem =
+                                        urlLimpa
+                                });
                     }
                 }
             }
 
-            // 5. Salva tudo de uma vez (Imóvel e Novas Imagens)
+
+            // ======================================================
+            // SALVA
+            // ======================================================
+
             await _context.SaveChangesAsync();
 
-            TempData["MensagemSucesso"] = $"Imóvel {imovelBanco.CodigoImovel} atualizado com sucesso!";
-            return RedirectToPage("/Admin/Dashboard");
+
+            TempData["MensagemSucesso"] =
+                $"Imóvel {imovelBanco.CodigoImovel} atualizado com sucesso!";
+
+
+            return RedirectToPage(
+                "/Admin/Dashboard");
         }
-        public async Task<IActionResult> OnPostDeletarImagemAsync(int imagemId)
+
+
+        // ==========================================================
+        // EXCLUIR IMAGEM
+        // ==========================================================
+
+        public async Task<IActionResult>
+            OnPostDeletarImagemAsync(
+                int imagemId)
         {
-            // Busca a imagem diretamente pelo ID dela
-            var imagem = await _context.ImagensImoveis.FindAsync(imagemId);
+            var imagem =
+                await _context.ImagensImoveis
+                    .FindAsync(imagemId);
+
 
             if (imagem == null)
             {
-                return BadRequest(new { sucesso = false, mensagem = "Imagem não encontrada." });
+                return BadRequest(
+                    new
+                    {
+                        sucesso = false,
+                        mensagem =
+                            "Imagem não encontrada."
+                    });
             }
+
 
             try
             {
-                _context.ImagensImoveis.Remove(imagem);
-                await _context.SaveChangesAsync();
-                return PackageJson(new { sucesso = true }); // Retorna sucesso para o JavaScript
+                _context.ImagensImoveis
+                    .Remove(imagem);
+
+                await _context
+                    .SaveChangesAsync();
+
+
+                return new JsonResult(
+                    new
+                    {
+                        sucesso = true
+                    });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { sucesso = false, mensagem = ex.Message });
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        sucesso = false,
+                        mensagem =
+                            ex.Message
+                    });
             }
         }
 
-        // Auxiliar para retornar JSON no Razor Pages sem complicações
-        private IActionResult PackageJson(object data)
+
+        // ==========================================================
+        // CARREGAR LISTAS
+        // ==========================================================
+
+        private async Task CarregarListasAsync()
         {
-            return new JsonResult(data);
+            var pessoas =
+                await _context.Pessoas
+                    .OrderBy(p => p.Nome)
+                    .ToListAsync();
+
+
+            ProprietariosList =
+                new SelectList(
+                    pessoas,
+                    "Id",
+                    "Nome",
+                    Imovel.ProprietarioId);
+
+
+            CorretoresList =
+                new SelectList(
+                    pessoas,
+                    "Id",
+                    "Nome",
+                    Imovel.CorretorId);
         }
     }
 }
