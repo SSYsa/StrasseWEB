@@ -1,6 +1,5 @@
 ﻿@page "/Admin/Imoveis/Criar"
 @model StrasseWebsite.Pages.Admin.Imoveis.CriarModel
-using StrasseWebsite.Models;
 @{
     Layout = "_Layout"; // Ou um layout próprio do painel admin se tiver
     ViewData["Title"] = "Painel - Cadastrar Imóvel";
@@ -143,12 +142,66 @@ using StrasseWebsite.Models;
                 <h5 class="text-secondary border-bottom pb-2 mb-3">5. Vínculos Administrativos</h5>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label asp-for="Imovel.ProprietarioId" class="form-label">Proprietário Vinculado *</label>
-                        <select asp-for="Imovel.ProprietarioId" asp-items="Model.ProprietariosList" class="form-select">
-                            <option value="">-- Selecione o Proprietário --</option>
-                        </select>
-                        <span asp-validation-for="Imovel.ProprietarioId" class="text-danger"></span>
-                    </div>
+
+                        <div class="col-md-6">
+
+                            <label asp-for="Imovel.ProprietarioId" class="form-label">
+                                Proprietário Vinculado *
+                            </label>
+
+                            <select asp-for="Imovel.ProprietarioId"
+                                    asp-items="Model.ProprietariosList"
+                                    class="form-select"
+                                    id="proprietarioSelect">
+
+                                <option value="">
+                                    -- Selecione o Proprietário --
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="Imovel.ProprietarioId"
+                                  class="text-danger">
+                            </span>
+
+                            <div class="form-check mt-2">
+
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       id="novoProprietarioCheck" />
+
+                                <label class="form-check-label"
+                                       for="novoProprietarioCheck">
+
+                                    Proprietário não está na lista
+
+                                </label>
+
+                            </div>
+
+                            <div id="novoProprietarioContainer"
+                                 class="mt-3"
+                                 style="display: none;">
+
+                                <label asp-for="NovoProprietario"
+                                       class="form-label">
+
+                                    Nome do novo proprietário *
+
+                                </label>
+
+                                <input asp-for="NovoProprietario"
+                                       class="form-control"
+                                       id="novoProprietarioInput"
+                                       placeholder="Digite o nome completo" />
+
+                                <span asp-validation-for="NovoProprietario"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                        </div>
                     <div class="col-md-6">
                         <label asp-for="Imovel.CorretorId" class="form-label">Corretor Responsável *</label>
                         <select asp-for="Imovel.CorretorId" asp-items="Model.CorretoresList" class="form-select">
@@ -168,6 +221,41 @@ using StrasseWebsite.Models;
     </div>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const checkbox = document.getElementById("novoProprietarioCheck");
+                const select = document.getElementById("proprietarioSelect");
+                const container = document.getElementById("novoProprietarioContainer");
+                const input = document.getElementById("novoProprietarioInput");
+
+                checkbox.addEventListener("change", function () {
+
+                    if (this.checked) {
+
+                        select.value = "";
+                        select.disabled = true;
+
+                        container.style.display = "block";
+                        input.disabled = false;
+                        input.focus();
+
+                    } else {
+
+                        select.disabled = false;
+
+                        container.style.display = "none";
+                        input.value = "";
+                        input.disabled = true;
+                    }
+                });
+
+                // Estado inicial
+                input.disabled = true;
+
+            });
+        </script>
+    }
