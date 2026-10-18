@@ -11,49 +11,138 @@
             <h2 class="font-weight-bold">Painel Administrativo</h2>
             <p class="text-muted">Gerencie os imóveis da Strasse, aplique filtros e faça manutenções.</p>
         </div>
-        <a href="/Admin/Imoveis/Criar" class="btn btn-danger btn-lg shadow-sm" style="background-color: #C00000; border: none;">
+
+        <a href="/Admin/Imoveis/Criar"
+           class="btn btn-danger btn-lg shadow-sm"
+           style="background-color: #C00000; border: none;">
             <i class="fas fa-plus me-2"></i> + Adicionar Imóvel
         </a>
     </div>
+
 
     @if (TempData["MensagemSucesso"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             @TempData["MensagemSucesso"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
         </div>
     }
 
+
+    <!-- ========================================================== -->
+    <!-- FILTROS -->
+    <!-- ========================================================== -->
+
     <div class="card mb-4 border-0 shadow-sm bg-light">
+
         <div class="card-body row g-3 align-items-center">
+
+            <!-- BUSCA POR TEXTO -->
+
             <div class="col-md-4">
-                <input type="text" id="filtroTexto" class="form-control" placeholder="🔍 Buscar por código, título ou bairro..." onkeyup="filtrarGrid()" />
+
+                <input type="text"
+                       id="filtroTexto"
+                       class="form-control"
+                       placeholder="🔍 Buscar por código, título ou bairro..."
+                       onkeyup="filtrarGrid()" />
+
             </div>
+
+
+            <!-- ================================================== -->
+            <!-- CIDADE / ESTADO -->
+            <!-- CORRIGIDO -->
+            <!-- ================================================== -->
+
             <div class="col-md-3">
-                <select id="filtroEstado" class="form-select" onchange="filtrarGrid()">
-                    <option value="">Filtrar por Cidade/Estado (Todos)</option>
-                    <option value="Blumenau/SC">Blumenau/SC</option>
-                    <option value="Gaspar/SC">Gaspar/SC</option>
+
+                <select id="filtroEstado"
+                        class="form-select"
+                        onchange="filtrarGrid()">
+
+                    <option value="">
+                        Filtrar por Cidade/Estado (Todos)
+                    </option>
+
+                    @foreach (var cidadeEstado in Model.CidadesEstadosDisponiveis)
+                    {
+                        var cidadeEstadoFormatada =
+                            Model.FormatarCidadeEstado(cidadeEstado);
+
+                        <option value="@cidadeEstadoFormatada">
+                            @cidadeEstadoFormatada
+                        </option>
+                    }
+
                 </select>
+
             </div>
+
+
+            <!-- ================================================== -->
+            <!-- TIPO -->
+            <!-- ================================================== -->
+
             <div class="col-md-3">
-                <select id="filtroTipo" class="form-select" onchange="filtrarGrid()">
-                    <option value="">Filtrar por Tipo (Todos)</option>
-                    <option value="Apartamento">Apartamento</option>
-                    <option value="Casa">Casa</option>
-                    <option value="Terreno">Terreno</option>
+
+                <select id="filtroTipo"
+                        class="form-select"
+                        onchange="filtrarGrid()">
+
+                    <option value="">
+                        Filtrar por Tipo (Todos)
+                    </option>
+
+                    @foreach (var tipo in Model.TiposImoveisDisponiveis)
+                    {
+                        <option value="@tipo">
+                            @tipo
+                        </option>
+                    }
+
                 </select>
+
             </div>
+
+
+            <!-- LIMPAR -->
+
             <div class="col-md-2 text-end">
-                <button class="btn btn-outline-secondary w-100" onclick="limparFiltros()">Limpar Filtros</button>
+
+                <button type="button"
+                        class="btn btn-outline-secondary w-100"
+                        onclick="limparFiltros()">
+
+                    Limpar Filtros
+
+                </button>
+
             </div>
+
         </div>
+
     </div>
 
+
+    <!-- ========================================================== -->
+    <!-- TABELA -->
+    <!-- ========================================================== -->
+
     <div class="card shadow-sm border-0">
+
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" id="tabelaImoveis">
+
+            <table class="table table-hover align-middle mb-0"
+                   id="tabelaImoveis">
+
                 <thead class="table-dark">
+
                     <tr>
                         <th style="width: 80px;">Foto</th>
                         <th>Código</th>
@@ -65,102 +154,320 @@
                         <th>Status</th>
                         <th class="text-center">Ações</th>
                     </tr>
+
                 </thead>
+
                 <tbody>
+
                     @foreach (var imovel in Model.Imoveis)
                     {
-                        <tr ondblclick="location.href='/Admin/Imoveis/Editar?id=@imovel.Id'" style="cursor: pointer;" title="Duplo clique para editar">
+                        <tr ondblclick="location.href='/Admin/Imoveis/Editar?id=@imovel.Id'"
+                            style="cursor: pointer;"
+                            title="Duplo clique para editar">
+
                             <td>
+
                                 @if (!string.IsNullOrEmpty(imovel.UrlImagemPrincipal))
                                 {
-                                    <img src="@imovel.UrlImagemPrincipal" alt="Miniatura" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;" />
+                                    <img src="@imovel.UrlImagemPrincipal"
+                                         alt="Miniatura"
+                                         style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;" />
                                 }
                                 else
                                 {
-                                    <span class="text-muted" style="font-size: 11px;">Sem foto</span>
+                                    <span class="text-muted"
+                                          style="font-size: 11px;">
+                                        Sem foto
+                                    </span>
                                 }
+
                             </td>
-                            <td><strong class="text-danger">@imovel.CodigoImovel</strong></td>
-                            <td class="text-truncate" style="max-width: 220px;">@imovel.Titulo</td>
-                            <td>@imovel.Tipo.ToString()</td>
-                            <td>@imovel.CidadeEstado</td>
-                            <td>@imovel.Bairro</td>
-                            <td class="text-end fw-bold">R$ @imovel.Preco.ToString("N2")</td>
+
+
                             <td>
-                                <span class="badge @(imovel.Status == "Disponivel" ? "bg-success" : "bg-warning text-dark")">
+                                <strong class="text-danger">
+                                    @imovel.CodigoImovel
+                                </strong>
+                            </td>
+
+
+                            <td class="text-truncate"
+                                style="max-width: 220px;">
+
+                                @imovel.Titulo
+
+                            </td>
+
+
+                            <td>
+                                @imovel.Tipo.ToString()
+                            </td>
+
+
+                            <!-- ================================================== -->
+                            <!-- CIDADE / ESTADO -->
+                            <!-- USA A MESMA FORMATAÇÃO DO FILTRO -->
+                            <!-- ================================================== -->
+
+                            <td>
+                                @Model.FormatarCidadeEstado(imovel.CidadeEstado)
+                            </td>
+
+
+                            <td>
+                                @imovel.Bairro
+                            </td>
+
+
+                            <td class="text-end fw-bold">
+                                R$ @imovel.Preco.ToString("N2")
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge @(imovel.Status == "Disponivel"
+                                    ? "bg-success"
+                                    : "bg-warning text-dark")">
+
                                     @imovel.Status
+
                                 </span>
+
                             </td>
+
+
                             <td class="text-center">
-                                <div class="d-flex justify-content-center gap-2" ondblclick="event.stopPropagation();">
-                                    <a href="/Admin/Imoveis/Editar?id=@imovel.Id" class="btn btn-sm btn-outline-dark" title="Editar">
+
+                                <div class="d-flex justify-content-center gap-2"
+                                     ondblclick="event.stopPropagation();">
+
+                                    <a href="/Admin/Imoveis/Editar?id=@imovel.Id"
+                                       class="btn btn-sm btn-outline-dark"
+                                       title="Editar">
+
                                         Editar
+
                                     </a>
-                                    <form method="post" asp-page-handler="Deletar" asp-route-id="@imovel.Id" onsubmit="return confirm('Tem certeza que deseja excluir o imóvel @imovel.CodigoImovel?');" style="margin:0;">
+
+
+                                    <form method="post"
+                                          asp-page-handler="Deletar"
+                                          asp-route-id="@imovel.Id"
+                                          onsubmit="return confirm('Tem certeza que deseja excluir o imóvel @imovel.CodigoImovel?');"
+                                          style="margin:0;">
+
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger">
+
+                                            Excluir
+
+                                        </button>
+
                                     </form>
+
                                 </div>
+
                             </td>
+
                         </tr>
                     }
+
+
                     @if (!Model.Imoveis.Any())
                     {
                         <tr>
-                            <td colspan="9" class="text-center py-5 text-muted">Nenhum imóvel cadastrado no sistema até o momento.</td>
+
+                            <td colspan="9"
+                                class="text-center py-5 text-muted">
+
+                                Nenhum imóvel cadastrado no sistema até o momento.
+
+                            </td>
+
                         </tr>
                     }
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
+
 </div>
 
-@section Scripts {
-    <script>
-        function filtrarGrid() {
-            var inputTexto = document.getElementById("filtroTexto").value.toUpperCase();
-            var selectEstado = document.getElementById("filtroEstado").value.toUpperCase();
-            var selectTipo = document.getElementById("filtroTipo").value.toUpperCase();
 
-            var table = document.getElementById("tabelaImoveis");
-            var tr = table.getElementsByTagName("tr");
+@section Scripts {
+
+    <script>
+
+        // ==========================================================
+        // NORMALIZA TEXTO
+        // ==========================================================
+
+        function normalizarTexto(texto) {
+
+            return (texto || "")
+                .trim()
+                .toUpperCase()
+                .replace(/\s*\/\s*/g, " - ")
+                .replace(/\s*,\s*/g, " - ")
+                .replace(/\s*-\s*/g, " - ")
+                .replace(/\s+/g, " ");
+
+        }
+
+
+        // ==========================================================
+        // FILTRAR GRID
+        // ==========================================================
+
+        function filtrarGrid() {
+
+            var inputTexto =
+                normalizarTexto(
+                    document.getElementById("filtroTexto").value
+                );
+
+            var selectEstado =
+                normalizarTexto(
+                    document.getElementById("filtroEstado").value
+                );
+
+            var selectTipo =
+                normalizarTexto(
+                    document.getElementById("filtroTipo").value
+                );
+
+
+            var table =
+                document.getElementById("tabelaImoveis");
+
+            var tr =
+                table.getElementsByTagName("tr");
+
 
             for (var i = 1; i < tr.length; i++) {
-                var tdCodigo = tr[i].getElementsByTagName("td")[1];
-                var tdTitulo = tr[i].getElementsByTagName("td")[2];
-                var tdTipo = tr[i].getElementsByTagName("td")[3];
-                var tdEstado = tr[i].getElementsByTagName("td")[4];
-                var tdBairro = tr[i].getElementsByTagName("td")[5];
 
-                if (tdCodigo && tdTitulo) {
-                    var txtCodigo = tdCodigo.textContent || tdCodigo.innerText;
-                    var txtTitulo = tdTitulo.textContent || tdTitulo.innerText;
-                    var txtTipo = tdTipo.textContent || tdTipo.innerText;
-                    var txtEstado = tdEstado.textContent || tdEstado.innerText;
-                    var txtBairro = tdBairro.textContent || tdBairro.innerText;
+                var tdCodigo =
+                    tr[i].getElementsByTagName("td")[1];
 
-                    var correspondeTexto = txtCodigo.toUpperCase().indexOf(inputTexto) > -1 ||
-                                           txtTitulo.toUpperCase().indexOf(inputTexto) > -1 ||
-                                           txtBairro.toUpperCase().indexOf(inputTexto) > -1;
+                var tdTitulo =
+                    tr[i].getElementsByTagName("td")[2];
 
-                    var correspondeEstado = selectEstado === "" || txtEstado.toUpperCase() === selectEstado;
-                    var correspondeTipo = selectTipo === "" || txtTipo.toUpperCase() === selectTipo;
+                var tdTipo =
+                    tr[i].getElementsByTagName("td")[3];
 
-                    if (correspondeTexto && correspondeEstado && correspondeTipo) {
+                var tdEstado =
+                    tr[i].getElementsByTagName("td")[4];
+
+                var tdBairro =
+                    tr[i].getElementsByTagName("td")[5];
+
+
+                if (
+                    tdCodigo &&
+                    tdTitulo &&
+                    tdTipo &&
+                    tdEstado &&
+                    tdBairro
+                ) {
+
+                    var txtCodigo =
+                        normalizarTexto(
+                            tdCodigo.textContent ||
+                            tdCodigo.innerText
+                        );
+
+                    var txtTitulo =
+                        normalizarTexto(
+                            tdTitulo.textContent ||
+                            tdTitulo.innerText
+                        );
+
+                    var txtTipo =
+                        normalizarTexto(
+                            tdTipo.textContent ||
+                            tdTipo.innerText
+                        );
+
+                    var txtEstado =
+                        normalizarTexto(
+                            tdEstado.textContent ||
+                            tdEstado.innerText
+                        );
+
+                    var txtBairro =
+                        normalizarTexto(
+                            tdBairro.textContent ||
+                            tdBairro.innerText
+                        );
+
+
+                    var correspondeTexto =
+                        inputTexto === "" ||
+
+                        txtCodigo.indexOf(inputTexto) > -1 ||
+
+                        txtTitulo.indexOf(inputTexto) > -1 ||
+
+                        txtBairro.indexOf(inputTexto) > -1;
+
+
+                    var correspondeEstado =
+                        selectEstado === "" ||
+
+                        txtEstado === selectEstado;
+
+
+                    var correspondeTipo =
+                        selectTipo === "" ||
+
+                        txtTipo === selectTipo;
+
+
+                    if (
+                        correspondeTexto &&
+                        correspondeEstado &&
+                        correspondeTipo
+                    ) {
+
                         tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
+
                     }
+                    else {
+
+                        tr[i].style.display = "none";
+
+                    }
+
                 }
+
             }
+
         }
+
+
+        // ==========================================================
+        // LIMPAR FILTROS
+        // ==========================================================
 
         function limparFiltros() {
+
             document.getElementById("filtroTexto").value = "";
+
             document.getElementById("filtroEstado").value = "";
+
             document.getElementById("filtroTipo").value = "";
+
             filtrarGrid();
+
         }
+
     </script>
+
 }

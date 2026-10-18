@@ -6,263 +6,748 @@
 }
 
 <div class="container my-5" style="max-width: 800px;">
+
     <div class="card shadow border-0 p-4">
-        <h2 class="fw-bold mb-4 text-secondary">Editar Imóvel: <span class="text-danger">@Model.Imovel.CodigoImovel</span></h2>
+
+        <h2 class="fw-bold mb-4 text-secondary">
+            Editar Imóvel:
+            <span class="text-danger">
+                @Model.Imovel.CodigoImovel
+            </span>
+        </h2>
+
 
         <form method="post" id="formEditarImovel">
-            <input type="hidden" asp-for="Imovel.Id" id="imovelId" />
-            <input type="hidden" asp-for="Imovel.CodigoImovel" />
-            @Html.AntiForgeryToken() <div class="row g-3">
-                <div class="col-md-12">
-                    <label class="form-label fw-bold">Título do Anúncio</label>
-                    <input asp-for="Imovel.Titulo" class="form-control" />
-                    <span asp-validation-for="Imovel.Titulo" class="text-danger"></span>
-                </div>
+
+            <input type="hidden"
+                   asp-for="Imovel.Id"
+                   id="imovelId" />
+
+            <input type="hidden"
+                   asp-for="Imovel.CodigoImovel" />
+
+            @Html.AntiForgeryToken()
+
+
+            <div class="row g-3">
+
+                <!-- ================================================= -->
+                <!-- TÍTULO -->
+                <!-- ================================================= -->
 
                 <div class="col-md-12">
-                    <label class="form-label fw-bold">Descrição</label>
-                    <textarea asp-for="Imovel.Descricao" class="form-control" rows="4"></textarea>
+
+                    <label class="form-label fw-bold">
+                        Título do Anúncio
+                    </label>
+
+                    <input asp-for="Imovel.Titulo"
+                           class="form-control" />
+
+                    <span asp-validation-for="Imovel.Titulo"
+                          class="text-danger">
+                    </span>
+
                 </div>
 
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Preço (R$)</label>
-                    <input asp-for="Imovel.Preco" type="number" step="0.01" class="form-control" />
-                </div>
 
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Cidade / Estado</label>
-                    <input asp-for="Imovel.CidadeEstado" class="form-control" />
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Bairro</label>
-                    <input asp-for="Imovel.Bairro" class="form-control" />
-                </div>
+                <!-- ================================================= -->
+                <!-- DESCRIÇÃO -->
+                <!-- ================================================= -->
 
                 <div class="col-md-12">
-                    <label class="form-label fw-bold">Endereço Completo</label>
-                    <input asp-for="Imovel.Endereco" class="form-control" />
+
+                    <label class="form-label fw-bold">
+                        Descrição
+                    </label>
+
+                    <textarea asp-for="Imovel.Descricao"
+                              class="form-control"
+                              rows="4">
+                    </textarea>
+
                 </div>
+
+
+                <!-- ================================================= -->
+                <!-- PREÇO -->
+                <!-- ================================================= -->
 
                 <div class="col-md-4">
-                    <label class="form-label fw-bold">Quartos</label>
-                    <input asp-for="Imovel.QuantidadeQuartos" type="number" class="form-control" />
+
+                    <label class="form-label fw-bold"
+                           id="labelPreco">
+                        Preço (R$)
+                    </label>
+
+                    <input asp-for="Imovel.Preco"
+                           type="number"
+                           step="0.01"
+                           class="form-control" />
+
+                    <small id="ajudaPreco"
+                           class="text-muted">
+                    </small>
+
                 </div>
+
+
+                <!-- ================================================= -->
+                <!-- CIDADE -->
+                <!-- ================================================= -->
 
                 <div class="col-md-4">
-                    <label class="form-label fw-bold">Banheiros</label>
-                    <input asp-for="Imovel.QuantidadeBanheiros" type="number" class="form-control" />
+
+                    <label class="form-label fw-bold">
+                        Cidade / Estado
+                    </label>
+
+                    <input asp-for="Imovel.CidadeEstado"
+                           class="form-control" />
+
                 </div>
+
+
+                <!-- ================================================= -->
+                <!-- BAIRRO -->
+                <!-- ================================================= -->
 
                 <div class="col-md-4">
-                    <label class="form-label fw-bold">Vagas de Garagem</label>
-                    <input asp-for="Imovel.QuantidadeVagasGaragem" type="number" class="form-control" />
+
+                    <label class="form-label fw-bold">
+                        Bairro
+                    </label>
+
+                    <input asp-for="Imovel.Bairro"
+                           class="form-control" />
+
                 </div>
 
-                <div class="col-md-6">
-    <label class="form-label fw-bold">Proprietário</label>
 
-    <select asp-for="Imovel.ProprietarioId"
-            asp-items="Model.ProprietariosList"
-            class="form-select"
-            id="proprietarioSelect">
-    </select>
-
-    <div class="form-check mt-2">
-        <input class="form-check-input"
-               type="checkbox"
-               id="novoProprietarioCheck">
-
-        <label class="form-check-label" for="novoProprietarioCheck">
-            Proprietário não está na lista
-        </label>
-    </div>
-
-    <div id="novoProprietarioContainer" class="mt-2" style="display:none;">
-        <input asp-for="NovoProprietario"
-               class="form-control"
-               id="novoProprietarioInput"
-               placeholder="Digite o nome do novo proprietário"
-               disabled />
-    </div>
-</div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Corretor Responsável</label>
-                    <select asp-for="Imovel.CorretorId" asp-items="Model.CorretoresList" class="form-select"></select>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Tipo de Imóvel</label>
-                    <select asp-for="Imovel.Tipo" asp-items="Html.GetEnumSelectList<StrasseWebsite.Models.TipoImovel>()" class="form-select"></select>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Transação</label>
-                    <select asp-for="Imovel.Transacao" asp-items="Html.GetEnumSelectList<StrasseWebsite.Models.TipoTransacao>()" class="form-select"></select>
-                </div>
+                <!-- ================================================= -->
+                <!-- ENDEREÇO -->
+                <!-- ================================================= -->
 
                 <div class="col-md-12">
-                    <label class="form-label fw-bold">URL da Imagem Principal (Supabase)</label>
-                    <input asp-for="Imovel.UrlImagemPrincipal" class="form-control" />
+
+                    <label class="form-label fw-bold">
+                        Endereço Completo
+                    </label>
+
+                    <input asp-for="Imovel.Endereco"
+                           class="form-control" />
+
                 </div>
+
+
+                <!-- ================================================= -->
+                <!-- ESTRUTURA -->
+                <!-- ================================================= -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Quartos
+                    </label>
+
+                    <input asp-for="Imovel.QuantidadeQuartos"
+                           type="number"
+                           class="form-control" />
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Banheiros
+                    </label>
+
+                    <input asp-for="Imovel.QuantidadeBanheiros"
+                           type="number"
+                           class="form-control" />
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Vagas de Garagem
+                    </label>
+
+                    <input asp-for="Imovel.QuantidadeVagasGaragem"
+                           type="number"
+                           class="form-control" />
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- PROPRIETÁRIO -->
+                <!-- ================================================= -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-bold">
+                        Proprietário
+                    </label>
+
+                    <select asp-for="Imovel.ProprietarioId"
+                            asp-items="Model.ProprietariosList"
+                            class="form-select"
+                            id="proprietarioSelect">
+                    </select>
+
+
+                    <div class="form-check mt-2">
+
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="novoProprietarioCheck">
+
+                        <label class="form-check-label"
+                               for="novoProprietarioCheck">
+                            Proprietário não está na lista
+                        </label>
+
+                    </div>
+
+
+                    <div id="novoProprietarioContainer"
+                         class="mt-2"
+                         style="display:none;">
+
+                        <input asp-for="NovoProprietario"
+                               class="form-control"
+                               id="novoProprietarioInput"
+                               placeholder="Digite o nome do novo proprietário"
+                               disabled />
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- CORRETOR -->
+                <!-- ================================================= -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-bold">
+                        Corretor Responsável
+                    </label>
+
+                    <select asp-for="Imovel.CorretorId"
+                            asp-items="Model.CorretoresList"
+                            class="form-select">
+                    </select>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- TIPO DE IMÓVEL -->
+                <!-- ================================================= -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-bold">
+                        Tipo de Imóvel
+                    </label>
+
+                    <select asp-for="Imovel.Tipo"
+                            asp-items="Html.GetEnumSelectList<StrasseWebsite.Models.TipoImovel>()"
+                            class="form-select">
+                    </select>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- TRANSAÇÃO -->
+                <!-- ================================================= -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-bold">
+                        Transação
+                    </label>
+
+                    <select asp-for="Imovel.Transacao"
+                            class="form-select"
+                            id="transacaoSelect">
+
+                        <option value="@TipoTransacao.Compra">
+                            Comprar imóvel usado
+                        </option>
+
+                        <option value="@TipoTransacao.Construcao">
+                            Comprar imóvel novo
+                        </option>
+
+                        <option value="@TipoTransacao.Aluguel">
+                            Alugar
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- IMAGEM PRINCIPAL -->
+                <!-- ================================================= -->
+
+                <div class="col-md-12">
+
+                    <label class="form-label fw-bold">
+                        URL da Imagem Principal (Supabase)
+                    </label>
+
+                    <input asp-for="Imovel.UrlImagemPrincipal"
+                           class="form-control" />
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- GALERIA -->
+                <!-- ================================================= -->
 
                 <div class="col-md-12 bg-light p-3 border rounded">
-                    <label class="form-label fw-bold text-secondary mb-3">Galeria de Fotos Atual (Clique para ampliar)</label>
-                    
-                    @if (Model.Imovel.ImagensSecundarias != null && Model.Imovel.ImagensSecundarias.Any())
+
+                    <label class="form-label fw-bold text-secondary mb-3">
+                        Galeria de Fotos Atual
+                        (Clique para ampliar)
+                    </label>
+
+
+                    @if (Model.Imovel.ImagensSecundarias != null &&
+                         Model.Imovel.ImagensSecundarias.Any())
                     {
+
                         <div class="row g-2 mb-3">
+
                             @foreach (var foto in Model.Imovel.ImagensSecundarias)
                             {
-                                <div class="col-6 col-md-3 position-relative card-foto" id="container-foto-@foto.Id">
-                                    <img src="@foto.UrlImagem" 
-                                         class="img-thumbnail d-block w-100 btn-zoom" 
-                                         style="height: 110px; object-fit: cover; cursor: pointer;" 
+
+                                <div class="col-6 col-md-3 position-relative card-foto"
+                                     id="container-foto-@foto.Id">
+
+                                    <img src="@foto.UrlImagem"
+                                         class="img-thumbnail d-block w-100 btn-zoom"
+                                         style="height: 110px; object-fit: cover; cursor: pointer;"
                                          alt="Foto do imóvel"
                                          onclick="abrirZoom('@foto.UrlImagem')">
-                                    
-                                    <button type="button" 
-                                            class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 shadow-sm rounded-circle d-flex align-items-center justify-content-center" 
+
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 shadow-sm rounded-circle d-flex align-items-center justify-content-center"
                                             style="width: 26px; height: 26px; padding: 0; font-size: 12px; font-weight: bold; border: 2px solid white;"
                                             title="Excluir Imagem"
                                             onclick="deletarImagemBanco(@foto.Id)">
+
                                         ✕
+
                                     </button>
+
                                 </div>
+
                             }
+
                         </div>
+
                     }
                     else
                     {
-                        <p class="text-muted small mb-3 text-gallery-vazia">Nenhuma imagem secundária cadastrada para este imóvel.</p>
+
+                        <p class="text-muted small mb-3 text-gallery-vazia">
+                            Nenhuma imagem secundária cadastrada para este imóvel.
+                        </p>
+
                     }
+
 
                     <hr class="text-muted" />
 
-                    <label class="form-label fw-bold text-danger">Adicionar Mais Fotos na Galeria (Múltiplas)</label>
-                    <p class="text-muted style-paragrafo" style="font-size:12px; margin-top:-5px;">Cole as URLs geradas pelo Supabase separando-as por vírgula ou uma por linha:</p>
-                    <textarea name="NovasImagensLinks" class="form-control" rows="3" placeholder="https://url1.supabase.co/...,&#10;https://url2.supabase.co/..."></textarea>
+
+                    <label class="form-label fw-bold text-danger">
+                        Adicionar Mais Fotos na Galeria (Múltiplas)
+                    </label>
+
+                    <p class="text-muted style-paragrafo"
+                       style="font-size:12px; margin-top:-5px;">
+
+                        Cole as URLs geradas pelo Supabase separando-as
+                        por vírgula ou uma por linha:
+
+                    </p>
+
+                    <textarea name="NovasImagensLinks"
+                              class="form-control"
+                              rows="3"
+                              placeholder="https://url1.supabase.co/...,&#10;https://url2.supabase.co/...">
+                    </textarea>
+
                 </div>
 
+
+                <!-- ================================================= -->
+                <!-- STATUS -->
+                <!-- ================================================= -->
+
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Status do Imóvel</label>
-                    <select asp-for="Imovel.Status" class="form-select">
-                        <option value="Disponivel">Disponível</option>
-                        <option value="Vendido">Vendido / Alugado</option>
-                        <option value="Inativo">Inativo</option>
+
+                    <label class="form-label fw-bold">
+                        Status do Imóvel
+                    </label>
+
+                    <select asp-for="Imovel.Status"
+                            class="form-select">
+
+                        <option value="Disponivel">
+                            Disponível
+                        </option>
+
+                        <option value="Vendido">
+                            Vendido / Alugado
+                        </option>
+
+                        <option value="Inativo">
+                            Inativo
+                        </option>
+
                     </select>
+
                 </div>
 
+
+                <!-- ================================================= -->
+                <!-- CONSTRUTORA -->
+                <!-- ================================================= -->
+
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Construtora Responsável</label>
-                    <input asp-for="Imovel.ConstrutoraResponsavel" class="form-control" placeholder="Opcional" />
+
+                    <label class="form-label fw-bold">
+                        Construtora Responsável
+                    </label>
+
+                    <input asp-for="Imovel.ConstrutoraResponsavel"
+                           class="form-control"
+                           placeholder="Opcional" />
+
                 </div>
+
             </div>
+
+
+            <!-- ================================================= -->
+            <!-- BOTÕES -->
+            <!-- ================================================= -->
 
             <div class="d-flex justify-content-end gap-2 mt-4">
-                <a href="/Admin/Dashboard" class="btn btn-outline-secondary px-4">Voltar</a>
-                <button type="submit" class="btn btn-danger px-5" style="background-color: #C00000; border:none;">Salvar Alterações</button>
+
+                <a href="/Admin/Dashboard"
+                   class="btn btn-outline-secondary px-4">
+                    Voltar
+                </a>
+
+                <button type="submit"
+                        class="btn btn-danger px-5"
+                        style="background-color: #C00000; border:none;">
+                    Salvar Alterações
+                </button>
+
             </div>
+
         </form>
+
     </div>
+
 </div>
 
-<div class="modal fade" id="modalZoomFoto" tabindex="-1" aria-hidden="true">
+
+<!-- ================================================= -->
+<!-- MODAL DE ZOOM -->
+<!-- ================================================= -->
+
+<div class="modal fade"
+     id="modalZoomFoto"
+     tabindex="-1"
+     aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered modal-lg">
+
         <div class="modal-content bg-transparent border-0">
+
             <div class="modal-body p-0 position-relative text-center">
-                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 shadow" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1060; background-color: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%;"></button>
-                <img src="" id="imgModalZoom" class="img-fluid rounded shadow-lg" style="max-height: 85vh; object-fit: contain;" alt="Imagem Ampliada">
+
+                <button type="button"
+                        class="btn-close btn-close-white position-absolute top-0 end-0 m-3 shadow"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                        style="z-index: 1060; background-color: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%;">
+                </button>
+
+                <img src=""
+                     id="imgModalZoom"
+                     class="img-fluid rounded shadow-lg"
+                     style="max-height: 85vh; object-fit: contain;"
+                     alt="Imagem Ampliada">
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 
 <style>
+
     .card-foto img:hover {
         opacity: 0.85;
         transition: 0.2s ease-in-out;
     }
+
 </style>
 
+
 <script>
-    // 1. Função para abrir o Modal com a foto grande
+
+    // =========================================================
+    // ZOOM DA FOTO
+    // =========================================================
+
     function abrirZoom(url) {
+
         document.getElementById('imgModalZoom').src = url;
-        var meuModal = new bootstrap.Modal(document.getElementById('modalZoomFoto'));
+
+        var meuModal =
+            new bootstrap.Modal(
+                document.getElementById('modalZoomFoto')
+            );
+
         meuModal.show();
     }
 
-    // 2. Função assíncrona para deletar a imagem usando Fetch API (Ajax)
+
+    // =========================================================
+    // EXCLUIR FOTO
+    // =========================================================
+
     async function deletarImagemBanco(imagemId) {
-        if (!confirm("Tem certeza que deseja remover permanentemente esta imagem da galeria?")) {
+
+        if (!confirm(
+            "Tem certeza que deseja remover permanentemente esta imagem da galeria?"
+        )) {
             return;
         }
 
-        // Recupera o token de segurança do formulário para evitar bloqueio do servidor
-        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        const token =
+            document.querySelector(
+                'input[name="__RequestVerificationToken"]'
+            ).value;
+
 
         try {
-            const resposta = await fetch(`/Admin/Imoveis/Editar?handler=DeletarImagem&imagemId=${imagemId}`, {
-                method: "POST",
-                headers: {
-                    "RequestVerificationToken": token
-                }
-            });
+
+            const resposta =
+                await fetch(
+                    `/Admin/Imoveis/Editar?handler=DeletarImagem&imagemId=${imagemId}`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "RequestVerificationToken": token
+                        }
+                    }
+                );
+
 
             if (resposta.ok) {
-                const resultado = await resposta.json();
+
+                const resultado =
+                    await resposta.json();
+
+
                 if (resultado.sucesso) {
-                    // Remove o bloco da imagem da tela instantaneamente com um efeito suave
-                    const elemento = document.getElementById(`container-foto-${imagemId}`);
-                    elemento.style.transition = "all 0.3s ease";
+
+                    const elemento =
+                        document.getElementById(
+                            `container-foto-${imagemId}`
+                        );
+
+
+                    elemento.style.transition =
+                        "all 0.3s ease";
+
                     elemento.style.opacity = "0";
+
+
                     setTimeout(() => {
                         elemento.remove();
                     }, 300);
-                } else {
-                    alert("Erro ao excluir: " + resultado.mensagem);
+
                 }
-            } else {
-                alert("Erro de comunicação com o servidor.");
+                else {
+
+                    alert(
+                        "Erro ao excluir: " +
+                        resultado.mensagem
+                    );
+
+                }
+
             }
-        } catch (erro) {
-            console.error(erro);
-            alert("Ocorreu uma falha ao tentar remover a imagem.");
+            else {
+
+                alert(
+                    "Erro de comunicação com o servidor."
+                );
+
+            }
+
         }
+        catch (erro) {
+
+            console.error(erro);
+
+            alert(
+                "Ocorreu uma falha ao tentar remover a imagem."
+            );
+
+        }
+
     }
 
-    // Controle de novo proprietário
-document.addEventListener("DOMContentLoaded", function () {
 
-    const checkbox = document.getElementById("novoProprietarioCheck");
-    const select = document.getElementById("proprietarioSelect");
-    const container = document.getElementById("novoProprietarioContainer");
-    const input = document.getElementById("novoProprietarioInput");
+    // =========================================================
+    // NOVO PROPRIETÁRIO + PREÇO
+    // =========================================================
 
-    checkbox.addEventListener("change", function () {
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-        if (this.checked) {
+            const checkbox =
+                document.getElementById(
+                    "novoProprietarioCheck"
+                );
 
-            select.value = "";
-            select.disabled = true;
+            const select =
+                document.getElementById(
+                    "proprietarioSelect"
+                );
 
-            container.style.display = "block";
-            input.disabled = false;
-            input.focus();
+            const container =
+                document.getElementById(
+                    "novoProprietarioContainer"
+                );
 
-        } else {
+            const input =
+                document.getElementById(
+                    "novoProprietarioInput"
+                );
 
-            select.disabled = false;
+            const transacao =
+                document.getElementById(
+                    "transacaoSelect"
+                );
 
-            container.style.display = "none";
-            input.value = "";
+            const labelPreco =
+                document.getElementById(
+                    "labelPreco"
+                );
+
+            const ajudaPreco =
+                document.getElementById(
+                    "ajudaPreco"
+                );
+
+
+            // =====================================================
+            // PROPRIETÁRIO
+            // =====================================================
+
+            checkbox.addEventListener(
+                "change",
+                function () {
+
+                    if (this.checked) {
+
+                        select.value = "";
+
+                        select.disabled = true;
+
+                        container.style.display =
+                            "block";
+
+                        input.disabled = false;
+
+                        input.focus();
+
+                    }
+                    else {
+
+                        select.disabled = false;
+
+                        container.style.display =
+                            "none";
+
+                        input.value = "";
+
+                        input.disabled = true;
+
+                    }
+
+                }
+            );
+
+
             input.disabled = true;
+
+
+            // =====================================================
+            // PREÇO / ALUGUEL
+            // =====================================================
+
+            function atualizarLabelPreco() {
+
+                if (transacao.value === "Aluguel") {
+
+                    labelPreco.textContent =
+                        "Valor do Aluguel (R$)";
+
+                    ajudaPreco.textContent =
+                        "Informe o valor mensal do aluguel.";
+
+                }
+                else {
+
+                    labelPreco.textContent =
+                        "Preço (R$)";
+
+                    ajudaPreco.textContent = "";
+
+                }
+
+            }
+
+
+            transacao.addEventListener(
+                "change",
+                atualizarLabelPreco
+            );
+
+
+            atualizarLabelPreco();
+
         }
-    });
+    );
 
-    input.disabled = true;
-
-});
 </script>

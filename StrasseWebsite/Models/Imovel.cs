@@ -8,7 +8,8 @@ namespace StrasseWebsite.Models;
 public enum TipoTransacao
 {
     Compra,
-    Construcao
+    Construcao,
+    Aluguel
 }
 
 public enum TipoImovel
