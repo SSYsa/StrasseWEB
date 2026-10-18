@@ -22,7 +22,9 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
         // Propriedade para receber novos links da galeria digitados no input de texto
         [BindProperty]
         public string? NovasImagensLinks { get; set; }
-
+        
+        [BindProperty]
+        public string? NovoProprietario { get; set; }
         public SelectList ProprietariosList { get; set; } = default!;
         public SelectList CorretoresList { get; set; } = default!;
 
@@ -79,7 +81,29 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
             imovelBanco.QuantidadeQuartos = Imovel.QuantidadeQuartos;
             imovelBanco.QuantidadeBanheiros = Imovel.QuantidadeBanheiros;
             imovelBanco.QuantidadeVagasGaragem = Imovel.QuantidadeVagasGaragem;
-            imovelBanco.ProprietarioId = Imovel.ProprietarioId;
+            if (!string.IsNullOrWhiteSpace(NovoProprietario))
+            {
+                var novoProprietario = new Pessoa
+                {
+                    Nome = NovoProprietario.Trim(),
+                    Tipo = TipoPessoa.Fisica,
+                    Documento = "PENDENTE",
+                    DataNascimento = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    Telefone = "PENDENTE",
+                    Email = "strasse.imoveis@gmail.com",
+                    Perfil = TipoPerfil.Cliente,
+                    Ativo = true,
+                    DataCadastro = DateTime.UtcNow
+                };
+
+                _context.Pessoas.Add(novoProprietario);
+
+                imovelBanco.Proprietario = novoProprietario;
+            }
+            else
+            {
+                imovelBanco.ProprietarioId = Imovel.ProprietarioId;
+            }
             imovelBanco.CorretorId = Imovel.CorretorId;
             imovelBanco.Tipo = Imovel.Tipo;
             imovelBanco.Transacao = Imovel.Transacao;
