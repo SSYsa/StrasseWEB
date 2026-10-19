@@ -15,11 +15,11 @@ namespace StrasseWebsite.Pages
             _context = context;
         }
 
-        // Força a página a ler o ID vindo da URL (?id=...) sem quebrar a rota
+        // Força a página a ler o ID vindo da URL (?id=...)
         [BindProperty(SupportsGet = true)]
         public int Id { get; set; }
 
-        // Propriedade que guardará o imóvel encontrado para o HTML usar
+        // Imóvel encontrado no banco
         public Imovel Imovel { get; set; } = null!;
 
         // Mantém o controle se o cliente veio da aba comprar ou construir
@@ -32,12 +32,22 @@ namespace StrasseWebsite.Pages
                 return NotFound();
             }
 
-            // Seu código que busca no banco... ex:
-            Imovel = await _context.Imoveis.FindAsync(id);
+            /*
+             * Carrega o imóvel juntamente com:
+             *
+             * - ImagensSecundarias
+             * - Corretor
+             *
+             * Dessa forma a galeria consegue utilizar
+             * todas as imagens cadastradas no banco.
+             */
+            Imovel = await _context.Imoveis
+                .Include(i => i.ImagensSecundarias)
+                .Include(i => i.Corretor)
+                .FirstOrDefaultAsync(i => i.Id == id);
 
             if (Imovel == null)
             {
-                // Vai cair na sua validação do HTML e exibir "Imóvel não encontrado" amigavelmente
                 return Page();
             }
 

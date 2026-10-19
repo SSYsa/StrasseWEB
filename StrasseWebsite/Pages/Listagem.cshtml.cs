@@ -15,6 +15,7 @@ namespace StrasseWebsite.Pages
             _context = context;
         }
 
+
         // ==========================================================
         // RESULTADOS
         // ==========================================================
@@ -64,13 +65,6 @@ namespace StrasseWebsite.Pages
 
         // ==========================================================
         // CONSTRUTORAS DISPONÍVEIS
-        //
-        // IMPORTANTE:
-        // Esta lista vem diretamente de:
-        //
-        // Imovel.ConstrutoraResponsavel
-        //
-        // Não existem nomes fixos/hardcoded aqui.
         // ==========================================================
 
         public List<string> ConstrutorasDisponiveis { get; set; } = new();
@@ -88,30 +82,29 @@ namespace StrasseWebsite.Pages
             // ======================================================
             // CONSTRUTORAS
             //
-            // Busca diretamente o conteúdo do campo
-            // ConstrutoraResponsavel no banco.
+            // A construtora pode existir em imóveis de COMPRA,
+            // ALUGUEL ou CONSTRUÇÃO.
             //
-            // Não depende de uma lista fixa.
-            // Não depende de Trim() dentro do SQL.
+            // Portanto, a lista é carregada independentemente
+            // da operação atualmente selecionada.
             // ======================================================
 
-            if (Operacao == "construir")
-            {
-                var valoresConstrutoras =
-                    await _context.Imoveis
-                        .AsNoTracking()
-                        .Where(i => i.ConstrutoraResponsavel != null)
-                        .Select(i => i.ConstrutoraResponsavel!)
-                        .ToListAsync();
+            var valoresConstrutoras =
+                await _context.Imoveis
+                    .AsNoTracking()
+                    .Where(i =>
+                        i.Status == "Disponivel" &&
+                        i.ConstrutoraResponsavel != null)
+                    .Select(i => i.ConstrutoraResponsavel!)
+                    .ToListAsync();
 
-                ConstrutorasDisponiveis =
-                    valoresConstrutoras
-                        .Where(c => !string.IsNullOrWhiteSpace(c))
-                        .Select(c => c.Trim())
-                        .Distinct(StringComparer.OrdinalIgnoreCase)
-                        .OrderBy(c => c)
-                        .ToList();
-            }
+            ConstrutorasDisponiveis =
+                valoresConstrutoras
+                    .Where(c => !string.IsNullOrWhiteSpace(c))
+                    .Select(c => c.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(c => c)
+                    .ToList();
 
 
             // ======================================================
@@ -177,13 +170,11 @@ namespace StrasseWebsite.Pages
             // ======================================================
             // CONSTRUTORA
             //
-            // Usa EXATAMENTE o campo:
-            //
-            // Imovel.ConstrutoraResponsavel
+            // O filtro funciona independentemente da operação.
+            // A operação continua sendo aplicada separadamente.
             // ======================================================
 
-            if (Operacao == "construir" &&
-                !string.IsNullOrWhiteSpace(Construtora))
+            if (!string.IsNullOrWhiteSpace(Construtora))
             {
                 var construtoraSelecionada =
                     Construtora.Trim();

@@ -132,67 +132,69 @@
 
 
             <!-- ============================= -->
-            <!-- CONSTRUTORAS -->
+            <!-- CONSTRUTORA / INCORPORADORA -->
             <!-- ============================= -->
-            @if (Model.Operacao == "construir")
-            {
-                <div class="filter-block filter-construtora-block">
+            <div class="filter-block filter-construtora-block">
 
-                    <h3>Incorporadora / Construtora</h3>
+                <h3>Incorporadora / Construtora</h3>
 
-                    <!-- TODAS -->
-                    <label class="check-container">
-
-                        Todas
-
-                        <input type="radio"
-                               name="construtora"
-                               value=""
-                               @(string.IsNullOrWhiteSpace(Model.Construtora)
-                                   ? "checked"
-                                   : "")
-                               onchange="submeterFiltro()">
-
-                        <span class="checkmark radio-mark"></span>
-
-                    </label>
+                <small class="text-muted d-block mb-2">
+                    Filtre pela empresa responsável pelo imóvel, quando informado.
+                </small>
 
 
-                    <!-- CONSTRUTORAS VINDAS DO BANCO -->
-                    @if (Model.ConstrutorasDisponiveis != null &&
-                         Model.ConstrutorasDisponiveis.Any())
+                <!-- TODAS -->
+                <label class="check-container">
+
+                    Todas
+
+                    <input type="radio"
+                           name="construtora"
+                           value=""
+                           @(string.IsNullOrWhiteSpace(Model.Construtora)
+                               ? "checked"
+                               : "")
+                           onchange="submeterFiltro()">
+
+                    <span class="checkmark radio-mark"></span>
+
+                </label>
+
+
+                <!-- CONSTRUTORAS VINDAS DO BANCO -->
+                @if (Model.ConstrutorasDisponiveis != null &&
+                     Model.ConstrutorasDisponiveis.Any())
+                {
+                    foreach (var construtora in Model.ConstrutorasDisponiveis)
                     {
-                        foreach (var construtora in Model.ConstrutorasDisponiveis)
-                        {
-                            <label class="check-container">
+                        <label class="check-container">
 
-                                @construtora
+                            @construtora
 
-                                <input type="radio"
-                                       name="construtora"
-                                       value="@construtora"
-                                       @(string.Equals(
-                                           Model.Construtora,
-                                           construtora,
-                                           StringComparison.OrdinalIgnoreCase)
-                                           ? "checked"
-                                           : "")
-                                       onchange="submeterFiltro()">
+                            <input type="radio"
+                                   name="construtora"
+                                   value="@construtora"
+                                   @(string.Equals(
+                                       Model.Construtora,
+                                       construtora,
+                                       StringComparison.OrdinalIgnoreCase)
+                                       ? "checked"
+                                       : "")
+                                   onchange="submeterFiltro()">
 
-                                <span class="checkmark radio-mark"></span>
+                            <span class="checkmark radio-mark"></span>
 
-                            </label>
-                        }
+                        </label>
                     }
-                    else
-                    {
-                        <small class="text-muted">
-                            Nenhuma construtora cadastrada.
-                        </small>
-                    }
+                }
+                else
+                {
+                    <small class="text-muted">
+                        Nenhuma construtora cadastrada.
+                    </small>
+                }
 
-                </div>
-            }
+            </div>
 
 
             <!-- ============================= -->

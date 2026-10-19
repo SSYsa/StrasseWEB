@@ -13,437 +13,216 @@
         </div>
 
         <div class="card-body">
-
-            <form method="post">
-
+            <form method="post" enctype="multipart/form-data" id="formCriarImovel">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <!-- ================================================= -->
                 <!-- 1. INFORMAÇÕES BÁSICAS -->
-                <!-- ================================================= -->
-
-                <h5 class="text-secondary border-bottom pb-2 mb-3">
-                    1. Informações Básicas
-                </h5>
+                <h5 class="text-secondary border-bottom pb-2 mb-3">1. Informações Básicas</h5>
 
                 <div class="row g-3 mb-4">
-
                     <div class="col-md-6">
-                        <label asp-for="Imovel.Titulo" class="form-label">
-                            Título do Anúncio *
-                        </label>
-
+                        <label asp-for="Imovel.Titulo" class="form-label">Título do Anúncio *</label>
                         <input asp-for="Imovel.Titulo"
                                class="form-control"
                                placeholder="Ex: Sobrado Moderno com Piscina" />
-
-                        <span asp-validation-for="Imovel.Titulo"
-                              class="text-danger">
-                        </span>
+                        <span asp-validation-for="Imovel.Titulo" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-3">
-
-                        <label asp-for="Imovel.Transacao"
-                               class="form-label">
-                            Tipo de Transação
-                        </label>
-
-                        <select asp-for="Imovel.Transacao"
-                                class="form-select"
-                                id="transacaoSelect">
-
-                            <option value="@TipoTransacao.Compra">
-                                Comprar imóvel usado
-                            </option>
-
-                            <option value="@TipoTransacao.Construcao">
-                                Comprar imóvel novo
-                            </option>
-
-                            <option value="@TipoTransacao.Aluguel">
-                                Alugar
-                            </option>
-
+                        <label asp-for="Imovel.Transacao" class="form-label">Tipo de Transação</label>
+                        <select asp-for="Imovel.Transacao" class="form-select" id="transacaoSelect">
+                            <option value="@TipoTransacao.Compra">Comprar imóvel usado</option>
+                            <option value="@TipoTransacao.Construcao">Comprar imóvel novo</option>
+                            <option value="@TipoTransacao.Aluguel">Alugar</option>
                         </select>
-
                     </div>
 
                     <div class="col-md-3">
-
-                        <label asp-for="Imovel.Tipo"
-                               class="form-label">
-                            Tipo do Imóvel
-                        </label>
-
+                        <label asp-for="Imovel.Tipo" class="form-label">Tipo do Imóvel</label>
                         <select asp-for="Imovel.Tipo"
                                 asp-items="Html.GetEnumSelectList<TipoImovel>()"
-                                class="form-select">
-                        </select>
-
+                                class="form-select"></select>
                     </div>
-
                 </div>
 
-
                 <div class="row g-3 mb-4">
-
+                    <!-- PREÇO -->
                     <div class="col-md-4">
-
-                        <label asp-for="Imovel.Preco"
-                               class="form-label"
-                               id="labelPreco">
+                        <label asp-for="Imovel.Preco" class="form-label" id="labelPreco">
                             Preço (R$) *
                         </label>
 
-                        <input asp-for="Imovel.Preco"
-                               type="number"
-                               step="0.01"
-                               class="form-control" />
+                        <input type="text"
+                               id="precoVisual"
+                               class="form-control"
+                               inputmode="decimal"
+                               autocomplete="off"
+                               placeholder="R$ 0,00"
+                               data-separador-decimal="@System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator" />
 
-                        <span asp-validation-for="Imovel.Preco"
-                              class="text-danger">
-                        </span>
+                        <input asp-for="Imovel.Preco" type="hidden" id="precoNumerico" />
 
-                        <small id="ajudaPreco"
-                               class="text-muted">
-                        </small>
-
+                        <span asp-validation-for="Imovel.Preco" class="text-danger"></span>
+                        <small id="ajudaPreco" class="text-muted"></small>
                     </div>
 
                     <div class="col-md-4">
-
-                        <label asp-for="Imovel.PagamentoDisponivel"
-                               class="form-label">
+                        <label asp-for="Imovel.PagamentoDisponivel" class="form-label">
                             Forma de Pagamento Principal
                         </label>
-
                         <select asp-for="Imovel.PagamentoDisponivel"
                                 asp-items="Html.GetEnumSelectList<FormaPagamento>()"
-                                class="form-select">
-                        </select>
-
+                                class="form-select"></select>
                     </div>
 
                     <div class="col-md-4">
-
-                        <label asp-for="Imovel.Status"
-                               class="form-label">
-                            Status Inicial
-                        </label>
-
-                        <select asp-for="Imovel.Status"
-                                class="form-select">
-
-                            <option value="Disponivel">
-                                Disponível
-                            </option>
-
-                            <option value="Vendido">
-                                Vendido / Alugado
-                            </option>
-
-                            <option value="Reservado">
-                                Reservado
-                            </option>
-
+                        <label asp-for="Imovel.Status" class="form-label">Status Inicial</label>
+                        <select asp-for="Imovel.Status" class="form-select">
+                            <option value="Disponivel">Disponível</option>
+                            <option value="Vendido">Vendido / Alugado</option>
+                            <option value="Reservado">Reservado</option>
                         </select>
-
                     </div>
-
                 </div>
 
-
-                <!-- ================================================= -->
                 <!-- 2. LOCALIZAÇÃO -->
-                <!-- ================================================= -->
-
-                <h5 class="text-secondary border-bottom pb-2 mb-3">
-                    2. Localização
-                </h5>
+                <h5 class="text-secondary border-bottom pb-2 mb-3">2. Localização</h5>
 
                 <div class="row g-3 mb-4">
-
                     <div class="col-md-5">
-
-                        <label asp-for="Imovel.Endereco"
-                               class="form-label">
-                            Endereço (Rua, Nº) *
-                        </label>
-
-                        <input asp-for="Imovel.Endereco"
-                               class="form-control" />
-
-                        <span asp-validation-for="Imovel.Endereco"
-                              class="text-danger">
-                        </span>
-
+                        <label asp-for="Imovel.Endereco" class="form-label">Endereço (Rua, Nº) *</label>
+                        <input asp-for="Imovel.Endereco" class="form-control" />
+                        <span asp-validation-for="Imovel.Endereco" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-
-                        <label asp-for="Imovel.Bairro"
-                               class="form-label">
-                            Bairro *
-                        </label>
-
-                        <input asp-for="Imovel.Bairro"
-                               class="form-control" />
-
-                        <span asp-validation-for="Imovel.Bairro"
-                              class="text-danger">
-                        </span>
-
+                        <label asp-for="Imovel.Bairro" class="form-label">Bairro *</label>
+                        <input asp-for="Imovel.Bairro" class="form-control" />
+                        <span asp-validation-for="Imovel.Bairro" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-3">
-
-                        <label asp-for="Imovel.CidadeEstado"
-                               class="form-label">
-                            Cidade/Estado *
-                        </label>
-
+                        <label asp-for="Imovel.CidadeEstado" class="form-label">Cidade/Estado *</label>
                         <input asp-for="Imovel.CidadeEstado"
                                class="form-control"
                                placeholder="Blumenau/SC" />
-
-                        <span asp-validation-for="Imovel.CidadeEstado"
-                              class="text-danger">
-                        </span>
-
+                        <span asp-validation-for="Imovel.CidadeEstado" class="text-danger"></span>
                     </div>
-
                 </div>
 
-
-                <!-- ================================================= -->
                 <!-- 3. ESTRUTURA -->
-                <!-- ================================================= -->
-
-                <h5 class="text-secondary border-bottom pb-2 mb-3">
-                    3. Estrutura e Dimensões
-                </h5>
+                <h5 class="text-secondary border-bottom pb-2 mb-3">3. Estrutura e Dimensões</h5>
 
                 <div class="row g-3 mb-4">
-
                     <div class="col-md-3">
-
-                        <label asp-for="Imovel.TamanhoTerreno"
-                               class="form-label">
-                            Área Total (m²)
-                        </label>
-
-                        <input asp-for="Imovel.TamanhoTerreno"
-                               type="number"
-                               step="0.01"
-                               class="form-control" />
-
+                        <label asp-for="Imovel.TamanhoTerreno" class="form-label">Área Total (m²)</label>
+                        <input asp-for="Imovel.TamanhoTerreno" type="number" step="0.01" class="form-control" />
                     </div>
 
                     <div class="col-md-3">
-
-                        <label asp-for="Imovel.TamanhoConstruido"
-                               class="form-label">
-                            Área Construída (m²)
-                        </label>
-
-                        <input asp-for="Imovel.TamanhoConstruido"
-                               type="number"
-                               step="0.01"
-                               class="form-control" />
-
+                        <label asp-for="Imovel.TamanhoConstruido" class="form-label">Área Construída (m²)</label>
+                        <input asp-for="Imovel.TamanhoConstruido" type="number" step="0.01" class="form-control" />
                     </div>
 
                     <div class="col-md-2">
-
-                        <label asp-for="Imovel.QuantidadeQuartos"
-                               class="form-label">
-                            Quartos
-                        </label>
-
-                        <input asp-for="Imovel.QuantidadeQuartos"
-                               type="number"
-                               class="form-control"
-                               min="0" />
-
+                        <label asp-for="Imovel.QuantidadeQuartos" class="form-label">Quartos</label>
+                        <input asp-for="Imovel.QuantidadeQuartos" type="number" class="form-control" min="0" />
                     </div>
 
                     <div class="col-md-2">
-
-                        <label asp-for="Imovel.QuantidadeBanheiros"
-                               class="form-label">
-                            Banheiros
-                        </label>
-
-                        <input asp-for="Imovel.QuantidadeBanheiros"
-                               type="number"
-                               class="form-control"
-                               min="0" />
-
+                        <label asp-for="Imovel.QuantidadeBanheiros" class="form-label">Banheiros</label>
+                        <input asp-for="Imovel.QuantidadeBanheiros" type="number" class="form-control" min="0" />
                     </div>
 
                     <div class="col-md-2">
-
-                        <label asp-for="Imovel.QuantidadeSalas"
-                               class="form-label">
-                            Salas
-                        </label>
-
-                        <input asp-for="Imovel.QuantidadeSalas"
-                               type="number"
-                               class="form-control"
-                               min="0" />
-
+                        <label asp-for="Imovel.QuantidadeSalas" class="form-label">Salas</label>
+                        <input asp-for="Imovel.QuantidadeSalas" type="number" class="form-control" min="0" />
                     </div>
-
                 </div>
-
 
                 <div class="row g-3 mb-4 align-items-center">
-
                     <div class="col-md-3">
-
                         <div class="form-check form-switch">
-
-                            <input asp-for="Imovel.TemPiscina"
-                                   class="form-check-input"
-                                   type="checkbox" />
-
-                            <label asp-for="Imovel.TemPiscina"
-                                   class="form-check-label">
-                                Possui Piscina
-                            </label>
-
+                            <input asp-for="Imovel.TemPiscina" class="form-check-input" type="checkbox" />
+                            <label asp-for="Imovel.TemPiscina" class="form-check-label">Possui Piscina</label>
                         </div>
-
                     </div>
 
                     <div class="col-md-3">
-
                         <div class="form-check form-switch">
-
-                            <input asp-for="Imovel.TemAcademia"
-                                   class="form-check-input"
-                                   type="checkbox" />
-
-                            <label asp-for="Imovel.TemAcademia"
-                                   class="form-check-label">
-                                Possui Academia
-                            </label>
-
+                            <input asp-for="Imovel.TemAcademia" class="form-check-input" type="checkbox" />
+                            <label asp-for="Imovel.TemAcademia" class="form-check-label">Possui Academia</label>
                         </div>
-
                     </div>
 
                     <div class="col-md-3">
-
                         <div class="form-check form-switch">
-
-                            <input asp-for="Imovel.TemGaragem"
-                                   class="form-check-input"
-                                   type="checkbox" />
-
-                            <label asp-for="Imovel.TemGaragem"
-                                   class="form-check-label">
-                                Possui Garagem
-                            </label>
-
+                            <input asp-for="Imovel.TemGaragem" class="form-check-input" type="checkbox" />
+                            <label asp-for="Imovel.TemGaragem" class="form-check-label">Possui Garagem</label>
                         </div>
-
                     </div>
 
                     <div class="col-md-3">
-
-                        <label asp-for="Imovel.QuantidadeVagasGaragem"
-                               class="form-label">
-                            Vagas de Garagem
-                        </label>
-
-                        <input asp-for="Imovel.QuantidadeVagasGaragem"
-                               type="number"
-                               class="form-control"
-                               min="0" />
-
+                        <label asp-for="Imovel.QuantidadeVagasGaragem" class="form-label">Vagas de Garagem</label>
+                        <input asp-for="Imovel.QuantidadeVagasGaragem" type="number" class="form-control" min="0" />
                     </div>
-
                 </div>
 
-
-                <!-- ================================================= -->
                 <!-- 4. MÍDIA -->
-                <!-- ================================================= -->
-
-                <h5 class="text-secondary border-bottom pb-2 mb-3">
-                    4. Mídia e Detalhes
-                </h5>
+                <h5 class="text-secondary border-bottom pb-2 mb-3">4. Mídia e Detalhes</h5>
 
                 <div class="row g-3 mb-4">
-
                     <div class="col-md-8">
-
-                        <label asp-for="Imovel.UrlImagemPrincipal"
-                               class="form-label">
-                            URL da Imagem Principal *
-                        </label>
-
-                        <input asp-for="Imovel.UrlImagemPrincipal"
+                        <label asp-for="Imagens" class="form-label">Imagens do Imóvel *</label>
+                        <input asp-for="Imagens"
+                               type="file"
                                class="form-control"
-                               placeholder="https://exemplo.com/foto.jpg" />
+                               accept="image/jpeg,image/png,image/webp"
+                               id="imagensInput"
+                               multiple />
+                        <span asp-validation-for="Imagens" class="text-danger"></span>
 
-                        <span asp-validation-for="Imovel.UrlImagemPrincipal"
-                              class="text-danger">
-                        </span>
+                        <small class="text-muted d-block mt-1">
+                            Selecione uma ou várias imagens. A primeira será a imagem principal.
+                            Formatos permitidos: JPG, PNG ou WEBP. Máximo: 10 MB por imagem.
+                        </small>
 
+                        <!-- PREVIEW DAS IMAGENS -->
+                        <div id="previewContainer" class="mt-3" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Imagens selecionadas</strong>
+                                <span id="quantidadeImagens" class="badge bg-secondary">0 imagens</span>
+                            </div>
+
+                            <div id="previewGrid" class="row g-3"></div>
+                        </div>
                     </div>
 
                     <div class="col-md-4">
-
-                        <label asp-for="Imovel.ConstrutoraResponsavel"
-                               class="form-label">
+                        <label asp-for="Imovel.ConstrutoraResponsavel" class="form-label">
                             Construtora (Opcional)
                         </label>
-
-                        <input asp-for="Imovel.ConstrutoraResponsavel"
-                               class="form-control" />
-
+                        <input asp-for="Imovel.ConstrutoraResponsavel" class="form-control" />
                     </div>
 
                     <div class="col-12">
-
-                        <label asp-for="Imovel.Descricao"
-                               class="form-label">
+                        <label asp-for="Imovel.Descricao" class="form-label">
                             Descrição Detalhada do Imóvel *
                         </label>
-
                         <textarea asp-for="Imovel.Descricao"
                                   class="form-control"
                                   rows="4"
-                                  placeholder="Escreva sobre os acabamentos, diferenciais...">
-                        </textarea>
-
-                        <span asp-validation-for="Imovel.Descricao"
-                              class="text-danger">
-                        </span>
-
+                                  placeholder="Escreva sobre os acabamentos, diferenciais..."></textarea>
+                        <span asp-validation-for="Imovel.Descricao" class="text-danger"></span>
                     </div>
-
                 </div>
 
-
-                <!-- ================================================= -->
                 <!-- 5. VÍNCULOS -->
-                <!-- ================================================= -->
-
-                <h5 class="text-secondary border-bottom pb-2 mb-3">
-                    5. Vínculos Administrativos
-                </h5>
+                <h5 class="text-secondary border-bottom pb-2 mb-3">5. Vínculos Administrativos</h5>
 
                 <div class="row g-3 mb-4">
-
                     <div class="col-md-6">
-
-                        <label asp-for="Imovel.ProprietarioId"
-                               class="form-label">
+                        <label asp-for="Imovel.ProprietarioId" class="form-label">
                             Proprietário Vinculado *
                         </label>
 
@@ -451,36 +230,20 @@
                                 asp-items="Model.ProprietariosList"
                                 class="form-select"
                                 id="proprietarioSelect">
-
-                            <option value="">
-                                -- Selecione o Proprietário --
-                            </option>
-
+                            <option value="">-- Selecione o Proprietário --</option>
                         </select>
 
-                        <span asp-validation-for="Imovel.ProprietarioId"
-                              class="text-danger">
-                        </span>
+                        <span asp-validation-for="Imovel.ProprietarioId" class="text-danger"></span>
 
                         <div class="form-check mt-2">
-
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   id="novoProprietarioCheck" />
-
-                            <label class="form-check-label"
-                                   for="novoProprietarioCheck">
+                            <input class="form-check-input" type="checkbox" id="novoProprietarioCheck" />
+                            <label class="form-check-label" for="novoProprietarioCheck">
                                 Proprietário não está na lista
                             </label>
-
                         </div>
 
-                        <div id="novoProprietarioContainer"
-                             class="mt-3"
-                             style="display: none;">
-
-                            <label asp-for="NovoProprietario"
-                                   class="form-label">
+                        <div id="novoProprietarioContainer" class="mt-3" style="display: none;">
+                            <label asp-for="NovoProprietario" class="form-label">
                                 Nome do novo proprietário *
                             </label>
 
@@ -489,156 +252,280 @@
                                    id="novoProprietarioInput"
                                    placeholder="Digite o nome completo" />
 
-                            <span asp-validation-for="NovoProprietario"
-                                  class="text-danger">
-                            </span>
-
+                            <span asp-validation-for="NovoProprietario" class="text-danger"></span>
                         </div>
-
                     </div>
 
-
                     <div class="col-md-6">
-
-                        <label asp-for="Imovel.CorretorId"
-                               class="form-label">
+                        <label asp-for="Imovel.CorretorId" class="form-label">
                             Corretor Responsável *
                         </label>
 
                         <select asp-for="Imovel.CorretorId"
                                 asp-items="Model.CorretoresList"
                                 class="form-select">
-
-                            <option value="">
-                                -- Selecione o Corretor --
-                            </option>
-
+                            <option value="">-- Selecione o Corretor --</option>
                         </select>
 
-                        <span asp-validation-for="Imovel.CorretorId"
-                              class="text-danger">
-                        </span>
-
+                        <span asp-validation-for="Imovel.CorretorId" class="text-danger"></span>
                     </div>
-
                 </div>
 
-
-                <!-- ================================================= -->
                 <!-- BOTÕES -->
-                <!-- ================================================= -->
-
                 <div class="d-flex justify-content-end gap-2 mt-4">
-
-                    <a href="/Admin/Dashboard"
-                       class="btn btn-outline-secondary">
-                        Cancelar
-                    </a>
+                    <a href="/Admin/Dashboard" class="btn btn-outline-secondary">Cancelar</a>
 
                     <button type="submit"
                             class="btn btn-danger px-4"
                             style="background-color: #C00000;">
                         Cadastrar Imóvel no Sistema
                     </button>
-
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>
 
-
 @section Scripts {
-
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-
         document.addEventListener("DOMContentLoaded", function () {
+            const checkbox = document.getElementById("novoProprietarioCheck");
+            const select = document.getElementById("proprietarioSelect");
+            const container = document.getElementById("novoProprietarioContainer");
+            const input = document.getElementById("novoProprietarioInput");
+            const transacao = document.getElementById("transacaoSelect");
+            const labelPreco = document.getElementById("labelPreco");
+            const ajudaPreco = document.getElementById("ajudaPreco");
 
-            const checkbox =
-                document.getElementById("novoProprietarioCheck");
-
-            const select =
-                document.getElementById("proprietarioSelect");
-
-            const container =
-                document.getElementById("novoProprietarioContainer");
-
-            const input =
-                document.getElementById("novoProprietarioInput");
-
-            const transacao =
-                document.getElementById("transacaoSelect");
-
-            const labelPreco =
-                document.getElementById("labelPreco");
-
-            const ajudaPreco =
-                document.getElementById("ajudaPreco");
-
-
-            // =====================================================
             // NOVO PROPRIETÁRIO
-            // =====================================================
-
             checkbox.addEventListener("change", function () {
-
                 if (this.checked) {
-
                     select.value = "";
                     select.disabled = true;
-
                     container.style.display = "block";
-
                     input.disabled = false;
                     input.focus();
-
                 } else {
-
                     select.disabled = false;
-
                     container.style.display = "none";
-
                     input.value = "";
                     input.disabled = true;
                 }
-
             });
 
             input.disabled = true;
 
+            // MÁSCARA MONETÁRIA
+            const precoVisual = document.getElementById("precoVisual");
+            const precoNumerico = document.getElementById("precoNumerico");
+            const formulario = document.getElementById("formCriarImovel");
+            const separadorDecimal = precoVisual.dataset.separadorDecimal || ",";
 
-            // =====================================================
-            // PREÇO / ALUGUEL
-            // =====================================================
+            function lerPreco(texto) {
+                let valor = texto.replace(/R\$/g, "").replace(/\s/g, "").trim();
 
-            function atualizarLabelPreco() {
-
-                if (transacao.value === "Aluguel") {
-
-                    labelPreco.textContent = "Valor do Aluguel (R$) *";
-                    ajudaPreco.textContent = "Informe o valor mensal do aluguel.";
-
-                } else {
-
-                    labelPreco.textContent = "Preço (R$) *";
-                    ajudaPreco.textContent = "";
-
+                if (!valor) {
+                    return null;
                 }
 
+                if (valor.includes(",")) {
+                    valor = valor.replace(/\./g, "").replace(",", ".");
+                }
+
+                const numero = Number(valor);
+                return Number.isFinite(numero) ? numero : null;
             }
 
-            transacao.addEventListener(
-                "change",
-                atualizarLabelPreco
-            );
+            function atualizarValorNumerico() {
+                const numero = lerPreco(precoVisual.value);
 
+                if (numero === null) {
+                    precoNumerico.value = "";
+                    return;
+                }
+
+                // Envia o valor sem separador de milhares.
+                precoNumerico.value = numero.toFixed(2).replace(".", separadorDecimal);
+            }
+
+            function aplicarMascaraPreco() {
+                let texto = precoVisual.value
+                    .replace(/R\$/g, "")
+                    .replace(/\s/g, "")
+                    .replace(/[^\d,.]/g, "");
+
+                if (!texto) {
+                    precoVisual.value = "";
+                    precoNumerico.value = "";
+                    return;
+                }
+
+                const temVirgula = texto.includes(",");
+                const partes = texto.split(",");
+                let inteiros = partes[0].replace(/[^\d]/g, "");
+                const decimais = temVirgula
+                    ? partes.slice(1).join("").replace(/[^\d]/g, "").slice(0, 2)
+                    : "";
+
+                inteiros = inteiros.replace(/^0+(?=\d)/, "");
+                inteiros = inteiros.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                precoVisual.value = "R$ " + (inteiros || "0");
+
+                if (temVirgula) {
+                    precoVisual.value += "," + decimais;
+                }
+
+                atualizarValorNumerico();
+            }
+
+            precoVisual.addEventListener("input", aplicarMascaraPreco);
+
+            precoVisual.addEventListener("blur", function () {
+                const numero = lerPreco(precoVisual.value);
+
+                if (numero !== null) {
+                    precoVisual.value = "R$ " + numero.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
+                    atualizarValorNumerico();
+                }
+            });
+
+            formulario.addEventListener("submit", function (evento) {
+                atualizarValorNumerico();
+
+                const numero = lerPreco(precoVisual.value);
+
+                if (numero === null || numero < 0) {
+                    evento.preventDefault();
+                    alert("Informe um preço válido para o imóvel.");
+                    precoVisual.focus();
+                }
+            });
+
+            // PREÇO / ALUGUEL
+            function atualizarLabelPreco() {
+                if (transacao.value === "Aluguel") {
+                    labelPreco.textContent = "Valor do Aluguel (R$) *";
+                    ajudaPreco.textContent = "Informe o valor mensal do aluguel.";
+                } else {
+                    labelPreco.textContent = "Preço (R$) *";
+                    ajudaPreco.textContent = "";
+                }
+            }
+
+            transacao.addEventListener("change", atualizarLabelPreco);
             atualizarLabelPreco();
 
-        });
+            // PREVIEW DAS IMAGENS
+            const imagensInput = document.getElementById("imagensInput");
+            const previewContainer = document.getElementById("previewContainer");
+            const previewGrid = document.getElementById("previewGrid");
+            const quantidadeImagens = document.getElementById("quantidadeImagens");
 
+            const tamanhoMaximo = 10 * 1024 * 1024;
+            const tiposPermitidos = ["image/jpeg", "image/png", "image/webp"];
+
+            let arquivosValidos = [];
+
+            imagensInput.addEventListener("change", function () {
+                const arquivos = Array.from(this.files);
+                arquivosValidos = [];
+
+                arquivos.forEach(function (arquivo) {
+                    if (!tiposPermitidos.includes(arquivo.type.toLowerCase())) {
+                        alert(`A imagem "${arquivo.name}" possui formato inválido.`);
+                        return;
+                    }
+
+                    if (arquivo.size > tamanhoMaximo) {
+                        alert(`A imagem "${arquivo.name}" ultrapassa o limite de 10 MB.`);
+                        return;
+                    }
+
+                    arquivosValidos.push(arquivo);
+                });
+
+                atualizarPreviews();
+            });
+
+            function atualizarPreviews() {
+                previewGrid.innerHTML = "";
+
+                const dataTransfer = new DataTransfer();
+
+                arquivosValidos.forEach(function (arquivo) {
+                    dataTransfer.items.add(arquivo);
+                });
+
+                imagensInput.files = dataTransfer.files;
+
+                arquivosValidos.forEach(function (arquivo, index) {
+                    const col = document.createElement("div");
+                    col.className = "col-6 col-md-4 col-lg-3";
+
+                    const card = document.createElement("div");
+                    card.className = "card h-100 shadow-sm";
+
+                    const imagem = document.createElement("img");
+                    imagem.className = "card-img-top";
+                    imagem.style.height = "150px";
+                    imagem.style.objectFit = "cover";
+                    imagem.alt = arquivo.name;
+                    imagem.src = URL.createObjectURL(arquivo);
+
+                    const body = document.createElement("div");
+                    body.className = "card-body p-2";
+
+                    const nome = document.createElement("div");
+                    nome.className = "small text-muted text-truncate";
+                    nome.title = arquivo.name;
+                    nome.textContent = arquivo.name;
+
+                    const principal = document.createElement("div");
+                    principal.className = "small text-danger fw-bold mt-1";
+
+                    if (index === 0) {
+                        principal.textContent = "★ Imagem principal";
+                    }
+
+                    const remover = document.createElement("button");
+                    remover.type = "button";
+                    remover.className = "btn btn-sm btn-outline-danger w-100 mt-2";
+                    remover.textContent = "Remover";
+
+                    remover.addEventListener("click", function () {
+                        arquivosValidos.splice(index, 1);
+                        atualizarPreviews();
+                    });
+
+                    body.appendChild(nome);
+                    body.appendChild(principal);
+                    body.appendChild(remover);
+
+                    card.appendChild(imagem);
+                    card.appendChild(body);
+
+                    col.appendChild(card);
+                    previewGrid.appendChild(col);
+                });
+
+                atualizarInformacoes();
+            }
+
+            function atualizarInformacoes() {
+                const quantidade = arquivosValidos.length;
+
+                quantidadeImagens.textContent = quantidade +
+                    (quantidade === 1 ? " imagem" : " imagens");
+
+                previewContainer.style.display = quantidade > 0 ? "block" : "none";
+            }
+        });
     </script>
 }

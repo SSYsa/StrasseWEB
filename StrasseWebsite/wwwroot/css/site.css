@@ -1291,14 +1291,6 @@ main, .main-content, .container-principal {
         background-color: #8A0000;
     }
 
-.modo-imobiliaria .filter-construtora-block {
-    display: none !important;
-}
-
-.modo-construtora .filter-construtora-block {
-    display: block !important;
-}
-
 /* ==========================================
    8. TELA DE DETALHES DO IMÓVEL
    ========================================== */

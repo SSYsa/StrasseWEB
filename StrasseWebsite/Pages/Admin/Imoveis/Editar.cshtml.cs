@@ -1,11 +1,17 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using StrasseWebsite.Data;
 using StrasseWebsite.Models;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace StrasseWebsite.Pages.Admin.Imoveis
@@ -13,20 +19,39 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
     public class EditarModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public EditarModel(ApplicationDbContext context)
+        public EditarModel(
+            ApplicationDbContext context,
+            IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [BindProperty]
         public Imovel Imovel { get; set; } = default!;
 
+
+        // ==========================================================
+        // NOVAS IMAGENS
+        // ==========================================================
+
         [BindProperty]
-        public string? NovasImagensLinks { get; set; }
+        public List<IFormFile> NovasImagens { get; set; } = new();
+
+
+        // ==========================================================
+        // IMAGEM PRINCIPAL ESCOLHIDA
+        // ==========================================================
+
+        [BindProperty]
+        public string? ImagemPrincipalSelecionada { get; set; }
+
 
         [BindProperty]
         public string? NovoProprietario { get; set; }
+
 
         public SelectList ProprietariosList { get; set; } = default!;
 
@@ -68,6 +93,60 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
             ModelState.Remove("Imovel.Corretor");
             ModelState.Remove("Imovel.CodigoImovel");
             ModelState.Remove("Imovel.ImagensSecundarias");
+            ModelState.Remove("Imovel.UrlImagemPrincipal");
+
+
+            // ======================================================
+            // VALIDAÇÃO DAS NOVAS IMAGENS
+            // ======================================================
+
+            const long tamanhoMaximo =
+                10 * 1024 * 1024;
+
+
+            var tiposPermitidos =
+                new[]
+                {
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp"
+                };
+
+
+            if (NovasImagens != null &&
+                NovasImagens.Count > 0)
+            {
+                foreach (var imagem in NovasImagens)
+                {
+                    if (imagem == null ||
+                        imagem.Length == 0)
+                    {
+                        ModelState.AddModelError(
+                            "NovasImagens",
+                            "Uma das imagens selecionadas está vazia.");
+
+                        continue;
+                    }
+
+
+                    if (imagem.Length > tamanhoMaximo)
+                    {
+                        ModelState.AddModelError(
+                            "NovasImagens",
+                            $"A imagem '{imagem.FileName}' deve ter no máximo 10 MB.");
+                    }
+
+
+                    if (!tiposPermitidos.Contains(
+                        imagem.ContentType,
+                        StringComparer.OrdinalIgnoreCase))
+                    {
+                        ModelState.AddModelError(
+                            "NovasImagens",
+                            $"A imagem '{imagem.FileName}' possui formato inválido. Utilize JPG, PNG ou WEBP.");
+                    }
+                }
+            }
 
 
             if (!ModelState.IsValid)
@@ -199,7 +278,7 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
 
 
             // ======================================================
-            // TIPO DO IMÓVEL
+            // TIPO
             // ======================================================
 
             imovelBanco.Tipo =
@@ -208,23 +287,10 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
 
             // ======================================================
             // TRANSAÇÃO
-            //
-            // Aqui entra:
-            // Compra
-            // Construcao
-            // Aluguel
             // ======================================================
 
             imovelBanco.Transacao =
                 Imovel.Transacao;
-
-
-            // ======================================================
-            // IMAGEM
-            // ======================================================
-
-            imovelBanco.UrlImagemPrincipal =
-                Imovel.UrlImagemPrincipal;
 
 
             // ======================================================
@@ -244,41 +310,289 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
 
 
             // ======================================================
-            // NOVAS IMAGENS
+            // UPLOAD DAS NOVAS IMAGENS
+            // ======================================================
+
+            var urlsNovasImagens =
+                new List<string>();
+
+
+            if (NovasImagens != null &&
+                NovasImagens.Count > 0)
+            {
+                try
+                {
+                    var supabaseUrl =
+                        _configuration["Supabase:Url"];
+
+                    var supabaseServiceKey =
+                        _configuration["Supabase:ServiceKey"];
+
+
+                    if (string.IsNullOrWhiteSpace(supabaseUrl) ||
+                        string.IsNullOrWhiteSpace(supabaseServiceKey))
+                    {
+                        ModelState.AddModelError(
+                            "NovasImagens",
+                            "A configuração do Supabase não foi encontrada.");
+
+                        await CarregarListasAsync();
+
+                        return Page();
+                    }
+
+
+                    const string nomeBucket =
+                        "StrasseImages";
+
+
+                    using var httpClient =
+                        new HttpClient();
+
+
+                    foreach (var imagem in NovasImagens)
+                    {
+                        var extensao =
+                            Path.GetExtension(
+                                imagem.FileName)
+                            .ToLowerInvariant();
+
+
+                        var nomeArquivo =
+                            $"{Guid.NewGuid():N}{extensao}";
+
+
+                        var caminhoStorage =
+                            $"{imovelBanco.CodigoImovel}/{nomeArquivo}";
+
+
+                        var uploadUrl =
+                            $"{supabaseUrl.TrimEnd('/')}" +
+                            $"/storage/v1/object/{nomeBucket}/{caminhoStorage}";
+
+
+                        using var stream =
+                            imagem.OpenReadStream();
+
+
+                        using var content =
+                            new StreamContent(stream);
+
+
+                        content.Headers.ContentType =
+                            new MediaTypeHeaderValue(
+                                imagem.ContentType);
+
+
+                        using var request =
+                            new HttpRequestMessage(
+                                HttpMethod.Post,
+                                uploadUrl);
+
+
+                        request.Headers.Add(
+                            "Authorization",
+                            $"Bearer {supabaseServiceKey}");
+
+
+                        request.Headers.Add(
+                            "apikey",
+                            supabaseServiceKey);
+
+
+                        request.Headers.Add(
+                            "x-upsert",
+                            "false");
+
+
+                        request.Content =
+                            content;
+
+
+                        var response =
+                            await httpClient.SendAsync(
+                                request);
+
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            var erro =
+                                await response.Content.ReadAsStringAsync();
+
+
+                            ModelState.AddModelError(
+                                "NovasImagens",
+                                $"Não foi possível enviar a imagem '{imagem.FileName}' para o Storage. {erro}");
+
+                            await CarregarListasAsync();
+
+                            return Page();
+                        }
+
+
+                        var urlPublica =
+                            $"{supabaseUrl.TrimEnd('/')}" +
+                            $"/storage/v1/object/public/{nomeBucket}/{caminhoStorage}";
+
+
+                        urlsNovasImagens.Add(
+                            urlPublica);
+                    }
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError(
+                        "NovasImagens",
+                        "Ocorreu um erro ao enviar as imagens para o Storage.");
+
+                    await CarregarListasAsync();
+
+                    return Page();
+                }
+            }
+
+
+            // ======================================================
+            // DEFINIR IMAGEM PRINCIPAL
             // ======================================================
 
             if (!string.IsNullOrWhiteSpace(
-                NovasImagensLinks))
+                ImagemPrincipalSelecionada))
             {
-                var links =
-                    NovasImagensLinks.Split(
-                        new[]
-                        {
-                            ',',
-                            '\n',
-                            '\r'
-                        },
-                        StringSplitOptions.RemoveEmptyEntries);
+                // --------------------------------------------------
+                // UMA IMAGEM NOVA FOI ESCOLHIDA COMO PRINCIPAL
+                // --------------------------------------------------
 
-
-                foreach (var link in links)
+                if (ImagemPrincipalSelecionada.StartsWith(
+                    "__NOVA__"))
                 {
-                    var urlLimpa =
-                        link.Trim();
+                    var textoIndice =
+                        ImagemPrincipalSelecionada
+                            .Replace(
+                                "__NOVA__",
+                                "");
+
+                    if (int.TryParse(
+                        textoIndice,
+                        out int indice) &&
+                        indice >= 0 &&
+                        indice < urlsNovasImagens.Count)
+                    {
+                        var novaPrincipal =
+                            urlsNovasImagens[indice];
 
 
+                        // A antiga principal vira imagem secundária
+                        if (!string.IsNullOrWhiteSpace(
+                            imovelBanco.UrlImagemPrincipal) &&
+                            imovelBanco.UrlImagemPrincipal !=
+                            novaPrincipal)
+                        {
+                            imovelBanco
+                                .ImagensSecundarias
+                                .Add(
+                                    new ImagemImovel
+                                    {
+                                        UrlImagem =
+                                            imovelBanco.UrlImagemPrincipal
+                                    });
+                        }
+
+
+                        imovelBanco.UrlImagemPrincipal =
+                            novaPrincipal;
+                    }
+                }
+                else
+                {
+                    // --------------------------------------------------
+                    // UMA IMAGEM EXISTENTE FOI ESCOLHIDA COMO PRINCIPAL
+                    // --------------------------------------------------
+
+                    var novaPrincipal =
+                        ImagemPrincipalSelecionada;
+
+
+                    // A antiga principal vai para a galeria
                     if (!string.IsNullOrWhiteSpace(
-                        urlLimpa))
+                        imovelBanco.UrlImagemPrincipal) &&
+                        imovelBanco.UrlImagemPrincipal !=
+                        novaPrincipal)
+                    {
+                        var antigaPrincipalJaNaGaleria =
+                            imovelBanco
+                                .ImagensSecundarias
+                                .Any(i =>
+                                    i.UrlImagem ==
+                                    imovelBanco.UrlImagemPrincipal);
+
+
+                        if (!antigaPrincipalJaNaGaleria)
+                        {
+                            imovelBanco
+                                .ImagensSecundarias
+                                .Add(
+                                    new ImagemImovel
+                                    {
+                                        UrlImagem =
+                                            imovelBanco.UrlImagemPrincipal
+                                    });
+                        }
+                    }
+
+
+                    // Remove a nova principal da galeria
+                    var imagemDaGaleria =
+                        imovelBanco
+                            .ImagensSecundarias
+                            .FirstOrDefault(i =>
+                                i.UrlImagem ==
+                                novaPrincipal);
+
+
+                    if (imagemDaGaleria != null)
                     {
                         imovelBanco
                             .ImagensSecundarias
-                            .Add(
-                                new ImagemImovel
-                                {
-                                    UrlImagem =
-                                        urlLimpa
-                                });
+                            .Remove(
+                                imagemDaGaleria);
                     }
+
+
+                    imovelBanco.UrlImagemPrincipal =
+                        novaPrincipal;
+                }
+            }
+
+
+            // ======================================================
+            // NOVAS IMAGENS QUE NÃO SÃO A PRINCIPAL
+            // ======================================================
+
+            for (
+                int i = 0;
+                i < urlsNovasImagens.Count;
+                i++)
+            {
+                var url =
+                    urlsNovasImagens[i];
+
+
+                var foiEscolhidaComoPrincipal =
+                    ImagemPrincipalSelecionada ==
+                    "__NOVA__" + i;
+
+
+                if (!foiEscolhidaComoPrincipal)
+                {
+                    imovelBanco
+                        .ImagensSecundarias
+                        .Add(
+                            new ImagemImovel
+                            {
+                                UrlImagem =
+                                    url
+                            });
                 }
             }
 
@@ -300,7 +614,7 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
 
 
         // ==========================================================
-        // EXCLUIR IMAGEM
+        // EXCLUIR IMAGEM DA GALERIA
         // ==========================================================
 
         public async Task<IActionResult>
@@ -328,6 +642,7 @@ namespace StrasseWebsite.Pages.Admin.Imoveis
             {
                 _context.ImagensImoveis
                     .Remove(imagem);
+
 
                 await _context
                     .SaveChangesAsync();

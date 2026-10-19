@@ -11,31 +11,33 @@
         return;
     }
 
-    ViewData["Title"] = Model.Operacao == "construir" ? "Detalhes do Projeto de Construção" : "Detalhes do Imóvel";
+    ViewData["Title"] = Model.Operacao == "construir"
+        ? "Detalhes do Projeto de Construção"
+        : "Detalhes do Imóvel";
+
     var culturaBr = new System.Globalization.CultureInfo("pt-BR");
 }
 
 <style>
+
     /* ==============================
        GALERIA DE IMAGENS
        ============================== */
 
     .property-gallery {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-
-.property-gallery .thumbs-grid {
-    width: 100%;
-    margin-top: 12px;
-}
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
 
     .property-gallery .main-photo {
         position: relative;
-        width: 100%;
+        width: min(100%, 820px);
+        height: clamp(280px, 50vw, 480px);
+        margin: 0 auto;
         overflow: hidden;
+        border-radius: 10px;
+        background: #f3f3f3;
         touch-action: pan-y;
         user-select: none;
     }
@@ -43,21 +45,25 @@
     .property-gallery .main-photo img {
         display: block;
         width: 100%;
-        height: auto;
+        height: 100%;
+        object-fit: cover;
         transition: opacity 0.15s ease;
         user-select: none;
         -webkit-user-drag: none;
     }
 
-    /* Setas da imagem principal */
+
+    /* ==============================
+       SETAS DA GALERIA
+       ============================== */
 
     .property-gallery .gallery-arrow {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
 
-        width: 44px;
-        height: 44px;
+        width: clamp(36px, 5vw, 44px);
+        height: clamp(36px, 5vw, 44px);
 
         padding: 0;
         border: none;
@@ -70,7 +76,7 @@
         align-items: center;
         justify-content: center;
 
-        font-size: 34px;
+        font-size: clamp(26px, 4vw, 34px);
         line-height: 1;
 
         cursor: pointer;
@@ -84,21 +90,25 @@
     }
 
     .property-gallery .gallery-prev {
-        left: 15px;
+        left: clamp(8px, 2vw, 15px);
     }
 
     .property-gallery .gallery-next {
-        right: 15px;
+        right: clamp(8px, 2vw, 15px);
     }
 
-    /* Miniaturas */
+
+    /* ==============================
+       MINIATURAS
+       ============================== */
 
     .property-gallery .thumbs-grid {
         display: flex;
         gap: 10px;
 
-        width: 100%;
-        margin-top: 12px;
+        width: min(100%, 820px);
+
+        margin: 12px auto 0;
 
         overflow-x: auto;
         overflow-y: hidden;
@@ -114,10 +124,10 @@
     }
 
     .property-gallery .thumb-img {
-        flex: 0 0 110px;
+        flex: 0 0 clamp(80px, 12vw, 110px);
 
-        width: 110px;
-        height: 75px;
+        width: clamp(80px, 12vw, 110px);
+        height: clamp(58px, 8vw, 75px);
 
         object-fit: cover;
 
@@ -141,13 +151,27 @@
         opacity: 1;
         border-color: #C00000;
     }
+
 </style>
 
-<div class="property-details-container @(Model.Operacao == "construir" ? "modo-construtora" : "modo-imobiliaria")">
+
+<div class="property-details-container @(Model.Operacao == "construir"
+     ? "modo-construtora"
+     : "modo-imobiliaria")">
+
+
+    <!-- ==============================
+         VOLTAR
+         ============================== -->
 
     <div class="back-to-list">
-        <a href="/Listagem?operacao=@Model.Operacao">‹ Voltar para a listagem</a>
+
+        <a href="/Listagem?operacao=@Model.Operacao">
+            ‹ Voltar para a listagem
+        </a>
+
     </div>
+
 
     <!-- ==============================
          GALERIA
@@ -155,7 +179,8 @@
 
     <section class="property-gallery">
 
-        <div class="main-photo" id="mainPhotoContainer">
+        <div class="main-photo"
+             id="mainPhotoContainer">
 
             <button type="button"
                     class="gallery-arrow gallery-prev"
@@ -164,12 +189,14 @@
                 ‹
             </button>
 
+
             <img id="mainPhoto"
                  src="@(string.IsNullOrEmpty(Model.Imovel.UrlImagemPrincipal)
-                        ? "https://placehold.co/800x450?text=Sem+Foto"
-                        : Model.Imovel.UrlImagemPrincipal)"
+                     ? "https://placehold.co/800x450?text=Sem+Foto"
+                     : Model.Imovel.UrlImagemPrincipal)"
                  alt="@Model.Imovel.Titulo"
                  draggable="false">
+
 
             <button type="button"
                     class="gallery-arrow gallery-next"
@@ -180,18 +207,30 @@
 
         </div>
 
-        <div class="thumbs-grid" id="thumbsGrid">
 
-            <!-- Imagem principal -->
+        <!-- ==============================
+             MINIATURAS
+             ============================== -->
 
-            <img src="@(string.IsNullOrEmpty(Model.Imovel.UrlImagemPrincipal)
-                        ? "https://placehold.co/800x450?text=Sem+Foto"
-                        : Model.Imovel.UrlImagemPrincipal)"
-                 class="thumb-img active"
-                 data-index="0"
-                 alt="Miniatura Principal">
+        <div class="thumbs-grid"
+             id="thumbsGrid">
 
-            <!-- Imagens secundárias -->
+            @if (!string.IsNullOrWhiteSpace(
+                Model.Imovel.UrlImagemPrincipal))
+            {
+                <!-- Imagem principal -->
+
+                <img src="@Model.Imovel.UrlImagemPrincipal"
+                     class="thumb-img active"
+                     data-index="0"
+                     alt="Imagem principal do imóvel"
+                     draggable="false">
+            }
+
+
+            <!-- ==============================
+                 IMAGENS SECUNDÁRIAS DO BANCO
+                 ============================== -->
 
             @if (Model.Imovel.ImagensSecundarias != null &&
                  Model.Imovel.ImagensSecundarias.Any())
@@ -200,119 +239,226 @@
 
                 foreach (var foto in Model.Imovel.ImagensSecundarias)
                 {
-                    <img src="@foto.UrlImagem"
-                         class="thumb-img"
-                         data-index="@indice"
-                         alt="Miniatura @(indice + 1)"
-                         draggable="false">
+                    if (!string.IsNullOrWhiteSpace(foto.UrlImagem))
+                    {
+                        <img src="@foto.UrlImagem"
+                             class="thumb-img"
+                             data-index="@indice"
+                             alt="Foto @(indice + 1) do imóvel"
+                             draggable="false">
 
-                    indice++;
+                        indice++;
+                    }
                 }
-            }
-            else
-            {
-                <img src="https://placehold.co/200x135?text=Strasse+1"
-                     class="thumb-img"
-                     data-index="1"
-                     alt="Miniatura Padrão">
-
-                <img src="https://placehold.co/200x135?text=Strasse+2"
-                     class="thumb-img"
-                     data-index="2"
-                     alt="Miniatura Padrão">
-
-                <img src="https://placehold.co/200x135?text=Strasse+3"
-                     class="thumb-img"
-                     data-index="3"
-                     alt="Miniatura Padrão">
             }
 
         </div>
 
     </section>
 
+
+    <!-- ==============================
+         CONTEÚDO DO IMÓVEL
+         ============================== -->
+
     <div class="details-content-grid">
 
+
+        <!-- ==============================
+             COLUNA DE INFORMAÇÕES
+             ============================== -->
+
         <main class="info-column">
+
+
+            <!-- ==============================
+                 CABEÇALHO
+                 ============================== -->
 
             <div class="property-main-header">
 
                 <span class="badge-status">
-                    @((Model.Operacao == "construir") ? "Pronto para Construir" : "Exclusividade")
+
+                    @((Model.Operacao == "construir")
+                        ? "Pronto para Construir"
+                        : "Exclusividade")
+
                 </span>
 
-                <h1>@Model.Imovel.Titulo</h1>
+
+                <h1>
+                    @Model.Imovel.Titulo
+                </h1>
+
 
                 <p class="location-text">
-                    📍 @Model.Imovel.Bairro - @Model.Imovel.CidadeEstado |
+
+                    📍 @Model.Imovel.Bairro -
+                    @Model.Imovel.CidadeEstado |
+
                     Código:
-                    <strong class="text-danger">@Model.Imovel.CodigoImovel</strong>
+
+                    <strong class="text-danger">
+                        @Model.Imovel.CodigoImovel
+                    </strong>
+
                 </p>
 
             </div>
 
+
+            <!-- ==============================
+                 ESPECIFICAÇÕES
+                 ============================== -->
+
             <div class="specs-ribbon">
 
-                <div class="spec-item">
-                    <span class="spec-icon">📐</span>
-                    <span class="spec-value">@Model.Imovel.TamanhoConstruido m²</span>
-                    <span class="spec-label">Área Útil</span>
-                </div>
 
                 <div class="spec-item">
-                    <span class="spec-icon">🛏️</span>
-                    <span class="spec-value">@Model.Imovel.QuantidadeQuartos</span>
-                    <span class="spec-label">Quartos</span>
-                </div>
 
-                <div class="spec-item">
-                    <span class="spec-icon">🚿</span>
-                    <span class="spec-value">@Model.Imovel.QuantidadeBanheiros</span>
-                    <span class="spec-label">Banheiros</span>
-                </div>
-
-                <div class="spec-item">
-                    <span class="spec-icon">🚗</span>
-                    <span class="spec-value">@Model.Imovel.QuantidadeVagasGaragem</span>
-                    <span class="spec-label">Vagas</span>
-                </div>
-
-            </div>
-
-            <div class="price-details-box">
-
-                <div class="price-row">
-                    <span class="price-label">Valor do Investimento</span>
-
-                    <span class="price-value-main">
-                        @Model.Imovel.Preco.ToString("C0", culturaBr)
-                    </span>
-                </div>
-
-                <div class="fees-row">
-
-                    <span>
-                        <strong>Área Total:</strong>
-                        @Model.Imovel.TamanhoTerreno m²
+                    <span class="spec-icon">
+                        📐
                     </span>
 
-                    <span>
-                        <strong>Área Construída:</strong>
+                    <span class="spec-value">
                         @Model.Imovel.TamanhoConstruido m²
                     </span>
 
-                    <span>
-                        <strong>Forma de Pagamento:</strong>
-                        @Model.Imovel.PagamentoDisponivel.ToString()
+                    <span class="spec-label">
+                        Área Útil
+                    </span>
+
+                </div>
+
+
+                <div class="spec-item">
+
+                    <span class="spec-icon">
+                        🛏️
+                    </span>
+
+                    <span class="spec-value">
+                        @Model.Imovel.QuantidadeQuartos
+                    </span>
+
+                    <span class="spec-label">
+                        Quartos
+                    </span>
+
+                </div>
+
+
+                <div class="spec-item">
+
+                    <span class="spec-icon">
+                        🚿
+                    </span>
+
+                    <span class="spec-value">
+                        @Model.Imovel.QuantidadeBanheiros
+                    </span>
+
+                    <span class="spec-label">
+                        Banheiros
+                    </span>
+
+                </div>
+
+
+                <div class="spec-item">
+
+                    <span class="spec-icon">
+                        🚗
+                    </span>
+
+                    <span class="spec-value">
+                        @Model.Imovel.QuantidadeVagasGaragem
+                    </span>
+
+                    <span class="spec-label">
+                        Vagas
                     </span>
 
                 </div>
 
             </div>
 
+
+            <!-- ==============================
+                 PREÇO
+                 ============================== -->
+
+            <div class="price-details-box">
+
+
+                <div class="price-row">
+
+                    <span class="price-label">
+                        Valor do Investimento
+                    </span>
+
+
+                    <span class="price-value-main">
+
+                        @Model.Imovel.Preco.ToString(
+                            "C0",
+                            culturaBr)
+
+                    </span>
+
+                </div>
+
+
+                <div class="fees-row">
+
+
+                    <span>
+
+                        <strong>
+                            Área Total:
+                        </strong>
+
+                        @Model.Imovel.TamanhoTerreno m²
+
+                    </span>
+
+
+                    <span>
+
+                        <strong>
+                            Área Construída:
+                        </strong>
+
+                        @Model.Imovel.TamanhoConstruido m²
+
+                    </span>
+
+
+                    <span>
+
+                        <strong>
+                            Forma de Pagamento:
+                        </strong>
+
+                        @Model.Imovel.PagamentoDisponivel.ToString()
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================
+                 DESCRIÇÃO
+                 ============================== -->
+
             <div class="description-section">
 
-                <h2>Descrição do Imóvel</h2>
+                <h2>
+                    Descrição do Imóvel
+                </h2>
+
 
                 <p style="white-space: pre-line;">
                     @Model.Imovel.Descricao
@@ -320,11 +466,20 @@
 
             </div>
 
+
+            <!-- ==============================
+                 CARACTERÍSTICAS
+                 ============================== -->
+
             <div class="features-section">
 
-                <h2>Características do Imóvel</h2>
+                <h2>
+                    Características do Imóvel
+                </h2>
+
 
                 <div class="features-grid">
+
 
                     @if (Model.Imovel.TemPiscina)
                     {
@@ -333,12 +488,14 @@
                         </div>
                     }
 
+
                     @if (Model.Imovel.TemAcademia)
                     {
                         <div class="feature-tag-item">
                             ✓ Academia
                         </div>
                     }
+
 
                     @if (Model.Imovel.TemGaragem)
                     {
@@ -347,79 +504,85 @@
                         </div>
                     }
 
+
                     @if (Model.Imovel.QuantidadeSalas > 0)
                     {
                         <div class="feature-tag-item">
-                            ✓ @Model.Imovel.QuantidadeSalas Salas
+
+                            ✓ @Model.Imovel.QuantidadeSalas
+                            Salas
+
                         </div>
                     }
 
-                    @if (!string.IsNullOrEmpty(Model.Imovel.ConstrutoraResponsavel))
+
+                    @if (!string.IsNullOrEmpty(
+                        Model.Imovel.ConstrutoraResponsavel))
                     {
                         <div class="feature-tag-item">
-                            🏗️ @Model.Imovel.ConstrutoraResponsavel
+
+                            🏗️
+                            @Model.Imovel.ConstrutoraResponsavel
+
                         </div>
                     }
 
+
                     <div class="feature-tag-item">
-                        ✓ Tipo: @Model.Imovel.Tipo.ToString()
+
+                        ✓ Tipo:
+                        @Model.Imovel.Tipo.ToString()
+
                     </div>
+
 
                 </div>
 
             </div>
 
-            @if (Model.Imovel.Corretor != null)
-            {
-                <div class="broker-info-section"
-                     style="margin-top: 40px; padding: 20px; background: #f9f9f9; border-radius: 8px; display: flex; align-items: center; gap: 20px;">
-
-                    <div class="broker-avatar" style="font-size: 40px;">
-                        👤
-                    </div>
-
-                    <div>
-
-                        <h4 style="margin: 0; font-size: 18px; color: #333;">
-                            Atendimento Exclusivo
-                        </h4>
-
-                        <p style="margin: 5px 0 0 0; color: #666; font-size: 16px;">
-                            Este imóvel está sob responsabilidade do parceiro Strasse.
-                        </p>
-
-                    </div>
-
-                </div>
-            }
-
         </main>
+
+
+        <!-- ==============================
+             SIDEBAR DE CONTATO
+             ============================== -->
 
         <aside class="contact-sidebar">
 
             <div class="sticky-contact-box">
 
+
                 <h3>
+
                     @((Model.Operacao == "construir")
                         ? "Gostou? Simule seu Projeto"
                         : "Fale com um Corretor")
+
                 </h3>
 
+
                 <p class="sidebar-subtitle">
+
                     Preencha o formulário abaixo e nossa equipe da Strasse entrará em contato em minutos.
+
                 </p>
 
-                <form method="post" class="contact-property-form">
+
+                <form method="post"
+                      class="contact-property-form">
+
 
                     <input type="hidden"
                            name="imovelId"
                            value="@Model.Imovel.Id" />
+
 
                     <div class="form-group">
 
                         <label for="txtName">
                             Nome Completo
                         </label>
+
 
                         <input type="text"
                                id="txtName"
@@ -429,11 +592,13 @@
 
                     </div>
 
+
                     <div class="form-group">
 
                         <label for="txtEmail">
                             E-mail
                         </label>
+
 
                         <input type="email"
                                id="txtEmail"
@@ -443,11 +608,13 @@
 
                     </div>
 
+
                     <div class="form-group">
 
                         <label for="txtPhone">
                             Telefone / WhatsApp
                         </label>
+
 
                         <input type="tel"
                                id="txtPhone"
@@ -457,17 +624,20 @@
 
                     </div>
 
+
                     <div class="form-group">
 
                         <label for="txtMessage">
                             Mensagem
                         </label>
 
+
                         <textarea id="txtMessage"
                                   name="message"
                                   rows="4">Olá! Tenho interesse neste imóvel (@Model.Imovel.CodigoImovel) localizado em @Model.Imovel.Bairro. Gostaria de receber mais informações.</textarea>
 
                     </div>
+
 
                     <button type="submit"
                             class="btn-send-lead">
@@ -480,11 +650,17 @@
 
                 </form>
 
+
+                <!-- ==============================
+                     WHATSAPP
+                     ============================== -->
+
                 <div class="direct-whatsapp-box">
 
                     <span>
                         Ou se preferir, chame agora:
                     </span>
+
 
                     <a href="https://wa.me/554733950009?text=Olá! Tenho interesse no imóvel @Model.Imovel.CodigoImovel que vi no site da Strasse."
                        target="_blank"
@@ -504,205 +680,361 @@
 
 </div>
 
+
 @section Scripts {
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
 
-            const mainPhoto = document.getElementById("mainPhoto");
-            const mainPhotoContainer = document.getElementById("mainPhotoContainer");
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
 
-            const thumbnails = Array.from(
-                document.querySelectorAll(".property-gallery .thumb-img")
-            );
+                const mainPhoto =
+                    document.getElementById(
+                        "mainPhoto"
+                    );
 
-            const galleryPrev = document.getElementById("galleryPrev");
-            const galleryNext = document.getElementById("galleryNext");
-            const thumbsGrid = document.getElementById("thumbsGrid");
 
-            let currentIndex = 0;
+                const mainPhotoContainer =
+                    document.getElementById(
+                        "mainPhotoContainer"
+                    );
 
-            function mostrarFoto(index) {
 
-                if (thumbnails.length === 0) {
-                    return;
+                const thumbnails =
+                    Array.from(
+                        document.querySelectorAll(
+                            ".property-gallery .thumb-img"
+                        )
+                    );
+
+
+                const galleryPrev =
+                    document.getElementById(
+                        "galleryPrev"
+                    );
+
+
+                const galleryNext =
+                    document.getElementById(
+                        "galleryNext"
+                    );
+
+
+                const thumbsGrid =
+                    document.getElementById(
+                        "thumbsGrid"
+                    );
+
+
+                let currentIndex = 0;
+
+
+                // =================================================
+                // MOSTRAR FOTO
+                // =================================================
+
+                function mostrarFoto(index) {
+
+                    if (thumbnails.length === 0) {
+                        return;
+                    }
+
+
+                    if (index < 0) {
+
+                        index =
+                            thumbnails.length - 1;
+
+                    }
+
+
+                    if (index >= thumbnails.length) {
+
+                        index = 0;
+
+                    }
+
+
+                    currentIndex = index;
+
+
+                    const novaImagem =
+                        thumbnails[currentIndex]
+                            .getAttribute("src");
+
+
+                    if (!novaImagem) {
+                        return;
+                    }
+
+
+                    mainPhoto.style.opacity =
+                        "0.3";
+
+
+                    setTimeout(
+                        function () {
+
+                            mainPhoto.src =
+                                novaImagem;
+
+                            mainPhoto.style.opacity =
+                                "1";
+
+                        },
+                        100
+                    );
+
+
+                    thumbnails.forEach(
+                        function (thumbnail) {
+
+                            thumbnail.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    const thumbnailAtual =
+                        thumbnails[currentIndex];
+
+
+                    thumbnailAtual.classList.add(
+                        "active"
+                    );
+
+
+                    /*
+                     * Centraliza a miniatura atual
+                     * dentro da faixa horizontal.
+                     */
+
+                    const posicao =
+                        thumbnailAtual.offsetLeft -
+                        (thumbsGrid.clientWidth / 2) +
+                        (thumbnailAtual.offsetWidth / 2);
+
+
+                    thumbsGrid.scrollTo(
+                        {
+                            left: posicao,
+                            behavior: "smooth"
+                        }
+                    );
+
                 }
 
-                if (index < 0) {
-                    index = thumbnails.length - 1;
-                }
 
-                if (index >= thumbnails.length) {
-                    index = 0;
-                }
+                // =================================================
+                // BOTÃO ANTERIOR
+                // =================================================
 
-                currentIndex = index;
+                galleryPrev.addEventListener(
+                    "click",
+                    function (event) {
 
-                const novaImagem =
-                    thumbnails[currentIndex].getAttribute("src");
+                        event.stopPropagation();
 
-                if (!novaImagem) {
-                    return;
-                }
+                        mostrarFoto(
+                            currentIndex - 1
+                        );
 
-                mainPhoto.style.opacity = "0.3";
+                    }
+                );
 
-                setTimeout(function () {
 
-                    mainPhoto.src = novaImagem;
-                    mainPhoto.style.opacity = "1";
+                // =================================================
+                // BOTÃO PRÓXIMO
+                // =================================================
 
-                }, 100);
+                galleryNext.addEventListener(
+                    "click",
+                    function (event) {
 
-                thumbnails.forEach(function (thumbnail) {
-                    thumbnail.classList.remove("active");
-                });
+                        event.stopPropagation();
 
-                const thumbnailAtual = thumbnails[currentIndex];
+                        mostrarFoto(
+                            currentIndex + 1
+                        );
 
-                thumbnailAtual.classList.add("active");
+                    }
+                );
 
-                /*
-                 * Centraliza a miniatura atual dentro
-                 * da faixa horizontal.
-                 */
-                const posicao =
-                    thumbnailAtual.offsetLeft -
-                    (thumbsGrid.clientWidth / 2) +
-                    (thumbnailAtual.offsetWidth / 2);
 
-                thumbsGrid.scrollTo({
-                    left: posicao,
-                    behavior: "smooth"
-                });
+                // =================================================
+                // CLIQUE NAS MINIATURAS
+                // =================================================
+
+                thumbnails.forEach(
+                    function (thumbnail, index) {
+
+                        thumbnail.addEventListener(
+                            "click",
+                            function () {
+
+                                mostrarFoto(index);
+
+                            }
+                        );
+
+                    }
+                );
+
+
+                // =================================================
+                // SWIPE NO CELULAR
+                // =================================================
+
+                let inicioX = 0;
+                let inicioY = 0;
+
+
+                mainPhotoContainer.addEventListener(
+                    "touchstart",
+                    function (event) {
+
+                        if (
+                            event.touches.length !== 1
+                        ) {
+                            return;
+                        }
+
+
+                        inicioX =
+                            event.touches[0]
+                                .clientX;
+
+
+                        inicioY =
+                            event.touches[0]
+                                .clientY;
+
+                    },
+                    {
+                        passive: true
+                    }
+                );
+
+
+                mainPhotoContainer.addEventListener(
+                    "touchend",
+                    function (event) {
+
+                        if (
+                            event.changedTouches.length !== 1
+                        ) {
+                            return;
+                        }
+
+
+                        const finalX =
+                            event.changedTouches[0]
+                                .clientX;
+
+
+                        const finalY =
+                            event.changedTouches[0]
+                                .clientY;
+
+
+                        const diferencaX =
+                            finalX - inicioX;
+
+
+                        const diferencaY =
+                            finalY - inicioY;
+
+
+                        /*
+                         * Ignora movimentos
+                         * predominantemente verticais.
+                         */
+
+                        if (
+                            Math.abs(diferencaX) <=
+                            Math.abs(diferencaY)
+                        ) {
+                            return;
+                        }
+
+
+                        /*
+                         * Exige um movimento mínimo.
+                         */
+
+                        if (
+                            Math.abs(diferencaX) < 50
+                        ) {
+                            return;
+                        }
+
+
+                        if (diferencaX < 0) {
+
+                            // Arrastou para a esquerda
+
+                            mostrarFoto(
+                                currentIndex + 1
+                            );
+
+                        }
+                        else {
+
+                            // Arrastou para a direita
+
+                            mostrarFoto(
+                                currentIndex - 1
+                            );
+
+                        }
+
+                    },
+                    {
+                        passive: true
+                    }
+                );
+
+
+                // =================================================
+                // TECLADO
+                // =================================================
+
+                document.addEventListener(
+                    "keydown",
+                    function (event) {
+
+                        if (
+                            event.key ===
+                            "ArrowLeft"
+                        ) {
+
+                            mostrarFoto(
+                                currentIndex - 1
+                            );
+
+                        }
+
+
+                        if (
+                            event.key ===
+                            "ArrowRight"
+                        ) {
+
+                            mostrarFoto(
+                                currentIndex + 1
+                            );
+
+                        }
+
+                    }
+                );
+
             }
+        );
 
-            /*
-             * Botão anterior
-             */
-            galleryPrev.addEventListener("click", function (event) {
-
-                event.stopPropagation();
-
-                mostrarFoto(currentIndex - 1);
-
-            });
-
-            /*
-             * Botão próximo
-             */
-            galleryNext.addEventListener("click", function (event) {
-
-                event.stopPropagation();
-
-                mostrarFoto(currentIndex + 1);
-
-            });
-
-            /*
-             * Clique nas miniaturas
-             */
-            thumbnails.forEach(function (thumbnail, index) {
-
-                thumbnail.addEventListener("click", function () {
-
-                    mostrarFoto(index);
-
-                });
-
-            });
-
-            /*
-             * ==============================
-             * DESLIZAR / SWIPE NA IMAGEM
-             * ==============================
-             */
-
-            let inicioX = 0;
-            let inicioY = 0;
-
-            mainPhotoContainer.addEventListener(
-                "touchstart",
-                function (event) {
-
-                    if (event.touches.length !== 1) {
-                        return;
-                    }
-
-                    inicioX = event.touches[0].clientX;
-                    inicioY = event.touches[0].clientY;
-
-                },
-                { passive: true }
-            );
-
-            mainPhotoContainer.addEventListener(
-                "touchend",
-                function (event) {
-
-                    if (event.changedTouches.length !== 1) {
-                        return;
-                    }
-
-                    const finalX =
-                        event.changedTouches[0].clientX;
-
-                    const finalY =
-                        event.changedTouches[0].clientY;
-
-                    const diferencaX = finalX - inicioX;
-                    const diferencaY = finalY - inicioY;
-
-                    /*
-                     * Ignora movimentos predominantemente verticais.
-                     */
-                    if (Math.abs(diferencaX) <= Math.abs(diferencaY)) {
-                        return;
-                    }
-
-                    /*
-                     * Exige um movimento mínimo para
-                     * evitar troca acidental.
-                     */
-                    if (Math.abs(diferencaX) < 50) {
-                        return;
-                    }
-
-                    if (diferencaX < 0) {
-
-                        // Arrastou para a esquerda
-                        mostrarFoto(currentIndex + 1);
-
-                    } else {
-
-                        // Arrastou para a direita
-                        mostrarFoto(currentIndex - 1);
-
-                    }
-
-                },
-                { passive: true }
-            );
-
-            /*
-             * ==============================
-             * TECLADO
-             * ==============================
-             */
-
-            document.addEventListener("keydown", function (event) {
-
-                if (event.key === "ArrowLeft") {
-                    mostrarFoto(currentIndex - 1);
-                }
-
-                if (event.key === "ArrowRight") {
-                    mostrarFoto(currentIndex + 1);
-                }
-
-            });
-
-        });
     </script>
 
 }
